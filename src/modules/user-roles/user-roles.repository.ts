@@ -18,4 +18,10 @@ export class UserRolesRepository extends BaseRepository {
   async remove(userRoles: UserRole[]) {
     return await this.getRepository(UserRole).remove(userRoles);
   }
+
+  async delete(userRoles: UserRole[]) {
+    return userRoles.map(async (ur) => {
+      return await this.getRepository(UserRole).delete({ id: ur.id });
+    });
+  }
 }

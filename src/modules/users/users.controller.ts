@@ -8,9 +8,9 @@ export class UsersController {
   constructor(private userService: UsersService) {}
 
   @UseInterceptors(TransactionInterceptor)
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateUserDto) {
-    return this.userService.update(+id, dto);
+  @Patch(':code')
+  update(@Param('code') code: string, @Body() dto: UpdateUserDto) {
+    return this.userService.update(code, dto);
   }
 
   @Get()
