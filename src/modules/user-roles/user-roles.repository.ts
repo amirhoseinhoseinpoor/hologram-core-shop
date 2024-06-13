@@ -20,8 +20,9 @@ export class UserRolesRepository extends BaseRepository {
   }
 
   async delete(userRoles: UserRole[]) {
-    return userRoles.map(async (ur) => {
-      return await this.getRepository(UserRole).delete({ id: ur.id });
-    });
+    if (Array.isArray(userRoles))
+      return userRoles.map(async (ur) => {
+        return await this.getRepository(UserRole).delete({ id: ur.id });
+      });
   }
 }

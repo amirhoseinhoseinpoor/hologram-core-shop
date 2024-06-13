@@ -7,6 +7,7 @@ import { UserRolesService } from '../user-roles/user-roles.service';
 import { User } from 'src/core/db/entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { OK, getUID6, ok } from 'src/core/misc/consts';
+import { FindUserDto } from './dto/find-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -39,7 +40,7 @@ export class UsersService {
   async update(code: string, dto: UpdateUserDto) {
     let curUser = await this.repo.findOne({ code: code });
     if (!curUser) throw new BadRequestException('User does not found');
-    Object.assign(curUser, await this.asUser(dto));
+    Object.assign(curUser, dto);
     if (Array.isArray(dto.roleIds)) {
       await this.userRoleService.exists(dto.roleIds);
       curUser.userRoles = await this.userRoleService.update(
@@ -56,18 +57,16 @@ export class UsersService {
     return await this.repo.findOne({ username: username });
   }
 
-  async findAll() {
-    return await this.repo.findAll();
+  async findBy(dto: FindUserDto) {
+    return await this.repo.findAll({ ...dto });
   }
 
-  async findOne(id: number) {
-    return await this.repo.findOne({ id: id });
-  }
-
-  async remove(id: number) {
-    const curUser = await this.repo.findOne({ id: id });
+  async remove(code: string) {
+    const curUser = await this.repo.findOne({ code: code });
     if (!curUser) throw new BadRequestException('User does not found');
     curUser.deleted = true;
-    return await this.repo.createOrUpdate(curUser);
+    curUser.active = false;
+    await this.repo.createOrUpdate(curUser);
+    return OK;
   }
 }

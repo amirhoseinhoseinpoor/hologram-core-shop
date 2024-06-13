@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, Param, Patch, UseInterceptors } from '@n
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { TransactionInterceptor } from 'src/core/db/transaction.interceptor';
+import { FindUserDto } from './dto/find-user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -14,13 +15,13 @@ export class UsersController {
   }
 
   @Get()
-  findAll() {
-    return this.userService.findAll();
+  find(@Body() dto: FindUserDto) {
+    return this.userService.findBy(dto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+  @Delete(':code')
+  remove(@Param('code') code: string) {
+    return this.userService.remove(code);
   }
 
 }

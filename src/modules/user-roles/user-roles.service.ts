@@ -27,12 +27,12 @@ export class UserRolesService {
   }
 
   async create(userId: number, roleIds: number[]) {
-    if (Array.isArray(roleIds))
+    if (Array.isArray(roleIds) && roleIds.length)
       return await this.repo.createOrUpdate(this.asUserRoles(userId, roleIds));
   }
 
   async update(userId: number, oldUserRoles: UserRole[], roleIds: number[]) {
-    if (roleIds?.length) await this.delete(oldUserRoles);
+    await this.delete(oldUserRoles);
     return await this.create(userId, roleIds);
   }
 
