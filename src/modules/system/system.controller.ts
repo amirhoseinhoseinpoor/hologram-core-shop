@@ -12,5 +12,6 @@ export class SystemController {
   uploadFile(@UploadedFile() file: Express.Multer.File) {
     console.log(file);
   }
+  
 
 }

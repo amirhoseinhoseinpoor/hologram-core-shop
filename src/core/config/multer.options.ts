@@ -4,11 +4,6 @@ import { diskStorage } from 'multer';
 import { v4 as uuid } from 'uuid';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
-// Multer configuration
-export const multerConfig = {
-  dest: process.env.UPLOAD_LOCATION,
-};
-
 // Multer upload options
 export const multerOptions = {
   // Enable file size limits
@@ -35,8 +30,9 @@ export const multerOptions = {
   storage: diskStorage({
     // Destination storage path details
     destination: (req: any, file: any, cb: any) => {
-      const uploadPath = multerConfig.dest;
+      const uploadPath = process.env.UPLOAD_LOCATION;
       // Create folder if doesn't exist
+      console.log('uploadPath', uploadPath)
       if (!existsSync(uploadPath)) {
         mkdirSync(uploadPath);
       }
