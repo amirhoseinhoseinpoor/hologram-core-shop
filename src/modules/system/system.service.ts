@@ -27,7 +27,7 @@ export class SystemService {
     return {
       banners: await this.uploadRepo
         .findAll()
-        .then((res) => res.map((r) => r.fileName)),
+        .then((res) => res.map((r) => ({ filename: r.fileName, flag: r.flag }))),
     };
   }
 }
