@@ -19,6 +19,7 @@ export class UsersController {
     return this.userService.findBy(dto);
   }
 
+  @UseInterceptors(TransactionInterceptor)
   @Delete(':code')
   remove(@Param('code') code: string) {
     return this.userService.remove(code);

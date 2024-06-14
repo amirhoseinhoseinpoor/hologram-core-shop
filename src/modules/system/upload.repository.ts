@@ -16,7 +16,7 @@ export class UploadRepository extends BaseRepository {
     return await this.getRepository(Upload).save(this.By(upload));
   }
 
-  async findAll(where: {}) {
+  async findAll(where?: {}) {
     return await this.find(Upload, { ...where, active: true });
   }
 

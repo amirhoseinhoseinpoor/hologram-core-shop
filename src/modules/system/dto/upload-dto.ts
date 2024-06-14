@@ -1,5 +1,4 @@
 export class UploadDto {
-  originalName: string;
-  
+  originalName: string;  
   fileName: string;
 }

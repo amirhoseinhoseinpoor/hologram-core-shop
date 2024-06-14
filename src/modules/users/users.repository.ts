@@ -15,7 +15,7 @@ export class UsersRepository extends BaseRepository {
     return await this.getRepository(User).save(this.By(user));
   }
 
-  async findAll(where: {}, relations?: {}) {
+  async findAll(where?: {}, relations?: {}) {
     return await this.find(User, { ...where, deleted: false }, relations);
   }
 
