@@ -14,6 +14,16 @@ SwaggerModule.setup('docs', app, document);
 
 //  app.useGlobalPipes(ValidationPipeEx);
 
+app.use(function(req, res, next) {
+  res.set('Access-Control-Allow-Origin', 'https://localhost');
+  res.set('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
+  res.set('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+  res.set('Access-Control-Allow-Credentials', true);
+  next();
+});
+
   await app.listen(7000);
+
+
 }
 bootstrap();
