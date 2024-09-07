@@ -10,6 +10,7 @@ import { AuthGuard } from './modules/auth/auth.guard';
 import { UsersModule } from './modules/users/users.module';
 import { RolesModule } from './modules/roles/roles.module';
 import { UserRolesModule } from './modules/user-roles/user-roles.module';
+import { SystemModule } from './modules/system/system.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { UserRolesModule } from './modules/user-roles/user-roles.module';
     UsersModule,
     RolesModule,
     UserRolesModule,
+    SystemModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',

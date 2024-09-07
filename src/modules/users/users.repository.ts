@@ -15,16 +15,12 @@ export class UsersRepository extends BaseRepository {
     return await this.getRepository(User).save(this.By(user));
   }
 
-  async findAll() {
-    return await this.find(User, { deleted: false });
+  async findAll(where?: {}, relations?: {}) {
+    return await this.find(User, { ...where, deleted: false }, relations);
   }
 
   async findOne(where: {}, relations?: {}) {
-    const users = await this.find(
-      User,
-      { ...where, deleted: false },
-      relations,
-    );
-    return users?.length == 1 ? users[0] : null;
+    let users = await this.findAll({ ...where, deleted: false }, relations);
+    return users?.length === 1 ? users[0] : null;
   }
 }
