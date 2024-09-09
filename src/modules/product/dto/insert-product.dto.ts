@@ -5,6 +5,7 @@ import {
   IsEnum,
   IsNotEmpty,
   IsNumber,
+  IsObject,
   IsOptional,
   IsPositive,
   IsString,
@@ -21,4 +22,13 @@ export class InsertProductDto {
     @IsOptional()
     title: string;
 
+    @ApiProperty()
+    @IsObject()
+    @IsOptional()
+    info: object;
+
+    @ApiProperty({ type: () => [Object] })
+    @IsArray()
+    @IsOptional()
+    media?: object[];
 }
