@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsArray,
+  IsBoolean,
   IsEmail,
   IsEnum,
   IsNotEmpty,
@@ -26,6 +27,12 @@ export class InsertProductDto {
     @IsObject()
     @IsOptional()
     info: object;
+
+    @ApiProperty()
+    @IsNotEmpty()
+    @IsBoolean()
+    @IsOptional()
+    active: boolean;
 
     @ApiProperty({ type: () => [Object] })
     @IsArray()
