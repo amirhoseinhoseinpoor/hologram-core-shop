@@ -8,7 +8,7 @@ import {
     IsNumber,
   } from 'class-validator';
 
-export class UpdateUserDto extends PartialType(InsertProductDto) {
+export class UpdateProductDto extends PartialType(InsertProductDto) {
     @ApiProperty()
     @IsNotEmpty()
     @IsBoolean()
