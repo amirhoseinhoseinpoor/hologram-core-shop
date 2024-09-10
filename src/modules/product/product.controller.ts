@@ -22,7 +22,7 @@ export class UsersController {
   @UseInterceptors(TransactionInterceptor)
   @Delete(':code')
   remove(@Param('code') id: number) {
-    return this.productService.remove(id);
+    return this.productService.delete(id);
   }
 
 }
