@@ -9,6 +9,9 @@ export class Product extends BaseRetailEntity {
   @Column({ type: 'boolean', nullable: false, default: true })
   active: boolean = true;
 
+  @Column({ type: 'boolean', default: false })
+  deleted: boolean = false;
+
   @Column('jsonb', { nullable: false, default: {} })
   info: object;
 
