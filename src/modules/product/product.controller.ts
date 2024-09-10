@@ -1,14 +1,28 @@
-import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
-import { Public } from './core/decorator/public.decorator';
+import { Body, Controller, Delete, Get, Param, Patch, UseInterceptors } from '@nestjs/common';
+import { TransactionInterceptor } from 'src/core/db/transaction.interceptor';
+import { GetProductDto } from './dto/select-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
+import { ProductService } from './product.service';
 
-@Controller()
-export class AppController {
-  constructor(private readonly appService: AppService) {}
+@Controller('users')
+export class UsersController {
+  constructor(private productService: ProductService) {}
+
+  @UseInterceptors(TransactionInterceptor)
+  @Patch(':code')
+  update(@Param('code') code: string, @Body() dto: UpdateProductDto) {
+    return this.productService.update(code, dto);
+  }
 
   @Get()
-  @Public()
-  getHello(): string {
-    return this.appService.getHello();
+  find(@Body() dto: GetProductDto) {
+    return this.productService.getProduct(dto.id);
   }
+
+  @UseInterceptors(TransactionInterceptor)
+  @Delete(':code')
+  remove(@Param('code') id: number) {
+    return this.productService.remove(id);
+  }
+
 }
