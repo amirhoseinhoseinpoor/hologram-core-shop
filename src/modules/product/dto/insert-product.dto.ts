@@ -28,12 +28,6 @@ export class InsertProductDto {
     @IsOptional()
     info: object;
 
-    @ApiProperty()
-    @IsNotEmpty()
-    @IsBoolean()
-    @IsOptional()
-    active: boolean;
-
     @ApiProperty({ type: () => [Object] })
     @IsArray()
     @IsOptional()
