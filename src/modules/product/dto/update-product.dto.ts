@@ -4,9 +4,8 @@ import {
     IsNotEmpty,
     IsOptional,
     IsString,
-    MaxLength,
-    MinLength,
     IsBoolean,
+    IsNumber,
   } from 'class-validator';
 
 export class UpdateUserDto extends PartialType(InsertProductDto) {
@@ -18,8 +17,13 @@ export class UpdateUserDto extends PartialType(InsertProductDto) {
 
     @ApiProperty()
     @IsString()
-    @MinLength(8, { message: 'product title must have at least 8 characters.' })
-    @MaxLength(150, { message: 'product title  must have maximum 150 characters.' })
     @IsOptional()
+    @IsNotEmpty()
     title: string;
+
+    @ApiProperty()
+    @IsNumber()
+    @IsOptional()
+    @IsNotEmpty()
+    id: number;
 }
