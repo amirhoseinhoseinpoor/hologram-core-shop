@@ -13,38 +13,39 @@ export class ProductService {
     return await this.repo.findAll();
   }
 
-  async getProduct(titlt: string): Promise<Product> {
-    const product = await this.repo.findOne({ titlt });
+  async getProduct(id: number): Promise<Product> {
+    const product = await this.repo.findOne({ id });
     if (!product) {
-      throw new NotFoundException(`Product with titlt ${titlt} not found`);
+      throw new NotFoundException(`Product with id ${id} not found`);
     }
     return product;
   }
+  
 
   async create(dto: InsertProductDto) {
-    const oldProduct = await this.repo.findOne({ title: dto.title });
+    const oldProduct = await this.repo.findOne({ id: dto.id });
     if (oldProduct) {
       throw new BadRequestException('Product with this title already exists.');
     }
     const newProduct: Product = new Product();
     newProduct.title = dto.title;
-    newProduct.active = dto.active !== undefined ? dto.active : true; // Set active status if provided, otherwise default to true
     newProduct.info = dto.info || {};
     newProduct.media = dto.media || [];
   
-    // Save the new product using the repository's createOrUpdate method
+  
     return await this.repo.createOrUpdate(newProduct);
   }
 
-  async updateProduct(titlt: string, productData: Partial<Product>): Promise<Product> {
-    const existingProduct = await this.getProduct(titlt);
+  async update(id: number, productData: Partial<Product>): Promise<Product> {
+    const existingProduct = await this.getProduct(id);
     Object.assign(existingProduct, productData);
     return await this.repo.createOrUpdate(existingProduct);
   }
 
-  async deleteProduct(title: string): Promise<void> {
-    const product = await this.getProduct(title);
-    product.active = false; // Soft delete
+  async delete(id: number): Promise<void> {
+    const product = await this.getProduct(id);
+    product.active = false;
+    product.deleted = true;
     await this.repo.createOrUpdate(product);
   }
 }
