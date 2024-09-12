@@ -33,10 +33,10 @@ export class SystemService {
     // return createReadStream(join(process.cwd(), process.env.UPLOAD_LOCATION ,filename));
   }
 
-  async updateFile(fileName: string, active: boolean) {
+  async removeFile(fileName: string) {
     const res = await this.mediaRepo.findOne({ fileName: fileName });
     if (!res) return NOT_OK;
-    res.active = active;
+    res.active = false;
     try {
       await this.mediaRepo.createOrUpdate([res]);
       return OK;
