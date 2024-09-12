@@ -1,4 +1,4 @@
-export class UploadDto {
+export class MediaDto {
   originalName: string;  
   fileName: string;
 }

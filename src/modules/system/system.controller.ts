@@ -1,9 +1,9 @@
-import {Body, Controller, Get, Param, Post, UploadedFiles, UseInterceptors} from '@nestjs/common';
+import {Body, Controller, Get, Param, Patch, Post, UploadedFiles, UseInterceptors} from '@nestjs/common';
 import { SystemService } from './system.service';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { multerOptions } from 'src/core/config/multer.options';
-import { UploadDto } from './dto/upload-dto';
-import { UploadTypeDto } from './dto/upload-type.dto';
+import { MediaDto } from './dto/media-dto';
+import { MediaTypeDto } from './dto/media-type.dto';
 
 @Controller('system')
 export class SystemController {
@@ -11,13 +11,18 @@ export class SystemController {
 
   @Post('upload')
   @UseInterceptors(FilesInterceptor('files', 20, multerOptions))
-  uploadFile(@Body() info: UploadTypeDto, @UploadedFiles() files: Array<Express.Multer.File>) {
-    let dto = files.map((f) =>({ originalName: f.originalname, fileName: f.filename }) as UploadDto);
+  uploadFile(@Body() info: MediaTypeDto, @UploadedFiles() files: Array<Express.Multer.File>) {
+    let dto = files.map((f) =>({ originalName: f.originalname, fileName: f.filename }) as MediaDto);
     return this.sysService.uploadFiles(info.tag, +info.type, dto);
   }
 
   @Get('download/:filename')
   dowloadFile(@Param('filename') filename: string) {
     return this.sysService.downloadFile(filename);
+  }
+
+  @Patch('media/:filename/:active')
+  updateFile(@Param('filename') filename: string, @Param('active') active: string) {
+    return this.sysService.updateFile(filename, /^true$/i.test(active));
   }
 }

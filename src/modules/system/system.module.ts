@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { SystemService } from './system.service';
 import { SystemController } from './system.controller';
-import { UploadRepository } from './upload.repository';
+import { MediaRepository } from './media.repository';
 
 @Module({
   controllers: [SystemController],
-  providers: [SystemService, UploadRepository],
+  providers: [SystemService, MediaRepository],
 })
 export class SystemModule {}
