@@ -9,6 +9,7 @@ import { join } from 'path';
 export class SystemService {
   constructor(private uploadRepo: UploadRepository) {}
 
+  //flag :: 1 = image , 2 = video
   async uploadBanner(flag: number, dto: UploadDto[]) {
     let banners = await this.uploadRepo.findAll({ flag: flag });
     banners = banners.map((b) => ({ ...b, active: false }) as Upload);
