@@ -3,11 +3,10 @@ import { IsNumber } from "class-validator";
 
 export class UploadTypeDto {
     @ApiProperty()
-    @IsNumber()
-    type: number;  
+    tag: string;  
 
     @ApiProperty()
     @IsNumber()
-    flag: number;
+    type: number;
   }
   

@@ -3,17 +3,15 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from 'src/core/db/entities/product.entity';
 import { ProductRepository } from './product.repository';
+import { OK } from 'src/core/misc/consts';
 
 @Injectable()
 export class ProductService {
   constructor(private repo: ProductRepository) {}
 
-  asProduct(dto: CreateProductDto | UpdateProductDto) {
-    return { ...dto, active: true, deleted: false } as Product;
-  }
-
   async create(dto: CreateProductDto) {
-    return await this.repo.createOrUpdate(this.asProduct(dto));
+    await this.repo.createOrUpdate({ ...dto, active: true, deleted: false } as Product);
+    return OK;
   }
 
   async findOne(id: number) {
@@ -25,6 +23,7 @@ export class ProductService {
   async update(id: number, dto: UpdateProductDto) {
     const product = await this.findOne(id);
     Object.assign(product, dto);
-    return await this.repo.createOrUpdate({...product, id: id} as Product);
+    await this.repo.createOrUpdate({...product, id: id} as Product);
+    return OK;
   }
 }
