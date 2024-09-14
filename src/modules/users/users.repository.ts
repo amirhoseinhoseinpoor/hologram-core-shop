@@ -23,4 +23,9 @@ export class UsersRepository extends BaseRepository {
     let users = await this.findAll({ ...where, deleted: false }, relations);
     return users?.length === 1 ? users[0] : null;
   }
+
+  async findInfo(where: {}, relations?: {}) {
+    let user  = await this.findOne({ ...where, deleted: false }, relations);
+    return user ;
+  }
 }
