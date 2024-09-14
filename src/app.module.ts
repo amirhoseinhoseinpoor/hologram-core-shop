@@ -11,6 +11,7 @@ import { UsersModule } from './modules/users/users.module';
 import { RolesModule } from './modules/roles/roles.module';
 import { UserRolesModule } from './modules/user-roles/user-roles.module';
 import { SystemModule } from './modules/system/system.module';
+import { ProductModule } from './modules/product/product.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { SystemModule } from './modules/system/system.module';
       dropSchema: /true/i.test(process.env.DB_DROP_SCHEMA),
       entities: [join(__dirname, '**', '*.entity.{ts,js}')],
     }),
+    ProductModule,
   ],
   controllers: [AppController],
   providers: [

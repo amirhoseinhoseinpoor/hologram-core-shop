@@ -15,12 +15,12 @@ export class ProductRepository extends BaseRepository {
     return await this.getRepository(Product).save(this.By(product));
   }
 
-  async findAll(where?: {}, relations?: {}) {
-    return await this.find(Product, { ...where, deleted: false }, relations);
+  async findAll(where?: {}) {
+    return await this.find(Product, { ...where, deleted: false });
   }
 
-  async findOne(where: {}, relations?: {}) {
-    let products = await this.findAll({ ...where, deleted: false }, relations);
+  async findOne(where: {}) {
+    let products = await this.findAll(where);
     return products?.length === 1 ? products[0] : null;
   }
 }

@@ -32,7 +32,8 @@ export const multerOptions = {
       cb(null, uploadPath);
     },
     filename: (req: any, file: any, cb: any) => {
-      cb(null, `${uuid()}${extname(file.originalname)}`);
+      cb(null, `${uuid()}`);
+      // cb(null, `${uuid()}${extname(file.originalname)}`);
     },
   }),
 };

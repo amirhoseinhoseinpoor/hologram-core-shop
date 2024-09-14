@@ -4,7 +4,7 @@ import { BaseRetailEntity } from './base-retail.entity';
 @Entity('Products')
 export class Product extends BaseRetailEntity {
   @Column({ type: 'varchar', length: 150, nullable: false })
-  title: string;
+  name: string;
 
   @Column({ type: 'boolean', nullable: false, default: true })
   active: boolean = true;

@@ -1,51 +1,29 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { ProductRepository } from './product.repository';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from 'src/core/db/entities/product.entity';
-import { InsertProductDto } from './dto/insert-product.dto';
+import { ProductRepository } from './product.repository';
+import { OK } from 'src/core/misc/consts';
 
 @Injectable()
 export class ProductService {
-  constructor(
-    private repo: ProductRepository,
-  ) {}
+  constructor(private repo: ProductRepository) {}
 
-  async getAllProducts(): Promise<Product[]> {
-    return await this.repo.findAll();
+  async create(dto: CreateProductDto) {
+    await this.repo.createOrUpdate({ ...dto, active: true, deleted: false } as Product);
+    return OK;
   }
 
-  async getProduct(id: number): Promise<Product> {
+  async findOne(id: number) {
     const product = await this.repo.findOne({ id });
-    if (!product) {
-      throw new NotFoundException(`Product with id ${id} not found`);
-    }
-    return product;
-  }
-  
-
-  async create(dto: InsertProductDto) {
-    const oldProduct = await this.repo.findOne({ id: dto.id });
-    if (oldProduct) {
-      throw new BadRequestException('Product with this title already exists.');
-    }
-    const newProduct: Product = new Product();
-    newProduct.title = dto.title;
-    newProduct.info = dto.info || {};
-    newProduct.media = dto.media || [];
-  
-  
-    return await this.repo.createOrUpdate(newProduct);
+    if (!product) throw new NotFoundException(`Product not found`);
+    return { name: product.name, info: product.info, media: product.media };
   }
 
-  async update(id: number, productData: Partial<Product>): Promise<Product> {
-    const existingProduct = await this.getProduct(id);
-    Object.assign(existingProduct, productData);
-    return await this.repo.createOrUpdate(existingProduct);
-  }
-
-  async delete(id: number): Promise<void> {
-    const product = await this.getProduct(id);
-    product.active = false;
-    product.deleted = true;
-    await this.repo.createOrUpdate(product);
+  async update(id: number, dto: UpdateProductDto) {
+    const product = await this.findOne(id);
+    Object.assign(product, dto);
+    await this.repo.createOrUpdate({...product, id: id} as Product);
+    return OK;
   }
 }

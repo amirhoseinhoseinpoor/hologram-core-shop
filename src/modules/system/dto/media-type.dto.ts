@@ -1,13 +1,12 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNumber } from "class-validator";
 
-export class UploadTypeDto {
+export class MediaTypeDto {
     @ApiProperty()
-    @IsNumber()
-    type: number;  
+    tag: string;  
 
     @ApiProperty()
     @IsNumber()
-    flag: number;
+    type: number;
   }
   
