@@ -4,6 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { TransactionInterceptor } from 'src/core/db/transaction.interceptor';
 import { FindUserDto } from './dto/find-user.dto';
 
+
 @Controller('users')
 export class UsersController {
   constructor(private userService: UsersService) {}
@@ -17,6 +18,11 @@ export class UsersController {
   @Get()
   find(@Body() dto: FindUserDto) {
     return this.userService.findBy(dto);
+  }
+
+  @Get('info/:username')
+  findInfo(@Param('username') username : string ) {
+    return this.userService.findInfo(username);
   }
 
   @UseInterceptors(TransactionInterceptor)
