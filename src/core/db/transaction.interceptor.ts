@@ -17,7 +17,6 @@ export class TransactionInterceptor implements NestInterceptor {
     context: ExecutionContext,
     next: CallHandler<any>,
   ): Promise<Observable<any>> {
-
     const req = context.switchToHttp().getRequest<Request>();
 
     const queryRunner = this.dataSource.createQueryRunner();
@@ -27,7 +26,6 @@ export class TransactionInterceptor implements NestInterceptor {
     req[ENTITY_MANAGER_KEY] = queryRunner.manager;
 
     return next.handle().pipe(
-
       concatMap(async (data) => {
         await queryRunner.commitTransaction();
         return data;

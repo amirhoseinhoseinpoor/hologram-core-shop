@@ -10,7 +10,11 @@ export class ProductService {
   constructor(private repo: ProductRepository) {}
 
   async create(dto: CreateProductDto) {
-    await this.repo.createOrUpdate({ ...dto, active: true, deleted: false } as Product);
+    await this.repo.createOrUpdate({
+      ...dto,
+      active: true,
+      deleted: false,
+    } as Product);
     return OK;
   }
 
@@ -23,7 +27,7 @@ export class ProductService {
   async update(id: number, dto: UpdateProductDto) {
     const product = await this.findOne(id);
     Object.assign(product, dto);
-    await this.repo.createOrUpdate({...product, id: id} as Product);
+    await this.repo.createOrUpdate({ ...product, id: id } as Product);
     return OK;
   }
 }

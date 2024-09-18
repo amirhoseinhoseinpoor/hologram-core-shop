@@ -1,4 +1,4 @@
 export class MediaDto {
-  originalName: string;  
+  originalName: string;
   fileName: string;
 }

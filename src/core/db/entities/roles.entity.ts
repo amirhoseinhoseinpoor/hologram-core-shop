@@ -3,8 +3,7 @@ import { UserRole } from './user-roles.entity';
 import { BaseRetailEntity } from './base-retail.entity';
 
 @Entity('Roles')
-export class Role extends BaseRetailEntity{
-
+export class Role extends BaseRetailEntity {
   @Column({ type: 'varchar', length: 30, nullable: false, unique: true })
   name: string;
 

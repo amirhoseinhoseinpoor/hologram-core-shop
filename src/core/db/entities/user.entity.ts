@@ -10,7 +10,7 @@ export class User extends BaseRetailEntity {
   @Column({ type: 'varchar', length: 15, nullable: true })
   nId: string;
 
-  @Column({ type: 'varchar', length: 15})
+  @Column({ type: 'varchar', length: 15 })
   username: string;
 
   @Column({ type: 'varchar' })

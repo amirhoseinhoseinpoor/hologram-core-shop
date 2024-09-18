@@ -7,6 +7,6 @@ import { UserRolesRepository } from './user-roles.repository';
   imports: [RolesModule],
   controllers: [],
   providers: [UserRolesService, UserRolesRepository],
-  exports: [UserRolesService]
+  exports: [UserRolesService],
 })
 export class UserRolesModule {}

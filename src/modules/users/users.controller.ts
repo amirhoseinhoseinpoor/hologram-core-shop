@@ -1,9 +1,16 @@
-import { Body, Controller, Delete, Get, Param, Patch, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  UseInterceptors,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { TransactionInterceptor } from 'src/core/db/transaction.interceptor';
 import { FindUserDto } from './dto/find-user.dto';
-
 
 @Controller('users')
 export class UsersController {
@@ -21,7 +28,7 @@ export class UsersController {
   }
 
   @Get('info/:username')
-  findInfo(@Param('username') username : string ) {
+  findInfo(@Param('username') username: string) {
     return this.userService.findInfo(username);
   }
 
@@ -30,5 +37,4 @@ export class UsersController {
   remove(@Param('code') code: string) {
     return this.userService.remove(code);
   }
-
 }

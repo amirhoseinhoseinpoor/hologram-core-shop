@@ -3,13 +3,13 @@ import { CreateProductDto } from './create-product.dto';
 import { IsBoolean, IsOptional } from 'class-validator';
 
 export class UpdateProductDto extends PartialType(CreateProductDto) {
-    @ApiProperty()
-    @IsBoolean()
-    @IsOptional()
-    active: boolean;
+  @ApiProperty()
+  @IsBoolean()
+  @IsOptional()
+  active: boolean;
 
-    @ApiProperty()
-    @IsBoolean()
-    @IsOptional()
-    deleted: boolean;
+  @ApiProperty()
+  @IsBoolean()
+  @IsOptional()
+  deleted: boolean;
 }

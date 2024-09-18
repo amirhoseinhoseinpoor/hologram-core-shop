@@ -56,8 +56,8 @@ export class UsersService {
     return await this.repo.findOne({ username: username });
   }
 
-  async findInfo(username : string) {
-    return await this.repo.findInfo({username : username});
+  async findInfo(username: string) {
+    return await this.repo.findInfo({ username: username });
   }
 
   async findBy(dto: FindUserDto) {

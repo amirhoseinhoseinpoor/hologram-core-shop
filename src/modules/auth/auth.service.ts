@@ -32,8 +32,7 @@ export class AuthService {
 
   async signUp(dto: CreateUserDto): Promise<any> {
     const user = await this.userService.findOneByUsername(dto.username);
-    if (user) 
-      throw new BadRequestException('Invalid Username');
+    if (user) throw new BadRequestException('Invalid Username');
     return await this.userService.create(dto);
   }
 }

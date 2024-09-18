@@ -26,17 +26,6 @@ async function bootstrap() {
 
 bootstrap();
 
-
-
-
-
-
-
-
-
-
-
-
 // import { NestFactory } from '@nestjs/core';
 // import { AppModule } from './app.module';
 // import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -62,7 +51,6 @@ bootstrap();
 // });
 
 //   await app.listen(7000);
-
 
 // }
 // bootstrap();

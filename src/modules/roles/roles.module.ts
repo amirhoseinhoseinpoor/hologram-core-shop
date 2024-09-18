@@ -7,6 +7,6 @@ import { RolesRepository } from './roles.repository';
   imports: [],
   controllers: [RolesController],
   providers: [RolesService, RolesRepository],
-  exports: [RolesService]
+  exports: [RolesService],
 })
 export class RolesModule {}
