@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   UseInterceptors,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -23,13 +24,8 @@ export class UsersController {
   }
 
   @Get()
-  find(@Body() dto: FindUserDto) {
+  find(@Query() dto: FindUserDto) {
     return this.userService.findBy(dto);
-  }
-
-  @Get('info/:username')
-  findInfo(@Param('username') username: string) {
-    return this.userService.findInfo(username);
   }
 
   @UseInterceptors(TransactionInterceptor)
