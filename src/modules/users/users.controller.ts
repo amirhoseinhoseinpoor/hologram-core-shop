@@ -6,7 +6,6 @@ import {
   Param,
   Patch,
   UseInterceptors,
-  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -25,7 +24,7 @@ export class UsersController {
   }
 
   @Get()
-  find(@Query() dto: FindUserDto) {
+  find(@Body() dto: FindUserDto) {
     return this.userService.findBy(dto);
   }
 
