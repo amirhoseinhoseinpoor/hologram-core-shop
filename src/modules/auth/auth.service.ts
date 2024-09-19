@@ -27,7 +27,11 @@ export class AuthService {
       domain: user.domain,
       roles: roles,
     };
-    return { firstName: user.firstName, lastName: user.lastName, token: await this.jwtService.signAsync(payload) };
+    return {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      token: await this.jwtService.signAsync(payload),
+    };
   }
 
   async signUp(dto: CreateUserDto): Promise<any> {

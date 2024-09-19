@@ -37,7 +37,7 @@ export class UsersService {
   }
 
   async update(code: string, dto: UpdateUserDto) {
-    let curUser = await this.repo.findOne({ code: code });
+    const curUser = await this.repo.findOne({ code: code });
     if (!curUser) throw new BadRequestException('User does not found');
     Object.assign(curUser, { ...this.asUser(dto), id: curUser.id });
     if (Array.isArray(dto.roleIds)) {

@@ -10,9 +10,14 @@ export class ProductService {
   constructor(private repo: ProductRepository) {}
 
   async create(dto: CreateProductDto) {
-    let code = getUID6();
-    await this.repo.createOrUpdate({ ...dto, code: code, active: true, deleted: false } as Product);
-    return {code: code, ...OK};
+    const code = getUID6();
+    await this.repo.createOrUpdate({
+      ...dto,
+      code: code,
+      active: true,
+      deleted: false,
+    } as Product);
+    return { code: code, ...OK };
     await this.repo.createOrUpdate({
       ...dto,
       active: true,
@@ -24,14 +29,24 @@ export class ProductService {
   async findOne(code: string) {
     const product = await this.repo.findOne({ code: code });
     if (!product) throw new NotFoundException(`Product not found`);
-    return { code: product.code, name: product.name, info: product.info, media: product.media };
+    return {
+      code: product.code,
+      name: product.name,
+      info: product.info,
+      media: product.media,
+    };
   }
 
   async findAll() {
     const products = await this.repo.findAll();
     if (!products?.length) return [];
-    return products.map(prod => {
-      return { code: prod.code, name: prod.name, info: prod.info, media: prod.media };
+    return products.map((prod) => {
+      return {
+        code: prod.code,
+        name: prod.name,
+        info: prod.info,
+        media: prod.media,
+      };
     });
   }
 
@@ -39,7 +54,7 @@ export class ProductService {
     const product = await this.repo.findOne({ code: code });
     if (!product) throw new NotFoundException(`Product not found`);
     Object.assign(product, dto);
-    await this.repo.createOrUpdate({...product} as Product);
+    await this.repo.createOrUpdate({ ...product } as Product);
     await this.repo.createOrUpdate({ ...product, id: id } as Product);
     return OK;
   }

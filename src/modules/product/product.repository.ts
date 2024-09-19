@@ -20,7 +20,7 @@ export class ProductRepository extends BaseRepository {
   }
 
   async findOne(where: {}) {
-    let products = await this.findAll(where);
+    const products = await this.findAll(where);
     return products?.length === 1 ? products[0] : null;
   }
 }

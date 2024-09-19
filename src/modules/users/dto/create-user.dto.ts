@@ -45,7 +45,7 @@ export class CreateUserDto {
   @IsOptional()
   email: string;
 
-  @ApiProperty({default: 'u', description: `Values are 'f', 'm', 'u'`})
+  @ApiProperty({ default: 'u', description: `Values are 'f', 'm', 'u'` })
   @IsOptional()
   @IsString()
   @IsEnum(['f', 'm', 'u'])
@@ -71,10 +71,14 @@ export class CreateUserDto {
   )
   password: string;
 
-  @ApiProperty({type: () => Number, default: 1, description: '1 => Customer, 2 => Provider'})
+  @ApiProperty({
+    type: () => Number,
+    default: 1,
+    description: '1 => Customer, 2 => Provider',
+  })
   @IsNotEmpty()
   @IsNumber()
-  @Min(1)  //Customer 1, Provider 2
+  @Min(1) //Customer 1, Provider 2
   @Max(2)
   domain: number;
 

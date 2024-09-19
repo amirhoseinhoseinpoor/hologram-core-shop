@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { MediaRepository } from './media.repository';
 import { MediaDto } from './dto/media-dto';
 import { Media } from 'src/core/db/entities/media.entity';
@@ -14,7 +18,13 @@ export class SystemService {
   async uploadFiles(info: MediaTypeDto, dto: MediaDto[]) {
     const files = [];
     dto?.forEach((d) =>
-      files.push({ tag: info.tag, type: +info.type, isPublic: info.isPublic, ...d, active: true } as Media),
+      files.push({
+        tag: info.tag,
+        type: +info.type,
+        isPublic: info.isPublic,
+        ...d,
+        active: true,
+      } as Media),
     );
     const result = await this.mediaRepo.createOrUpdate(files);
     return result.map((res) => ({

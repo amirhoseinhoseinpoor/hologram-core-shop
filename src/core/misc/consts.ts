@@ -26,7 +26,7 @@ export const getBarCode = () => {
 };
 
 export const getUID11 = (prefix?: string) => {
-  let code =
+  const code =
     (prefix ?? '') +
     Math.floor(Date.now() * Math.random() * 100000)
       .toString(36)

@@ -25,7 +25,7 @@ export class SystemController {
     @Body() info: MediaTypeDto,
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
-    let dto = files.map(
+    const dto = files.map(
       (f) =>
         ({ originalName: f.originalname, fileName: f.filename }) as MediaDto,
     );
@@ -41,7 +41,6 @@ export class SystemController {
   getFile(@Param('filename') filename: string) {
     return this.sysService.getFile(filename);
   }
-
 
   @Get('download/list/:tag')
   @Public()

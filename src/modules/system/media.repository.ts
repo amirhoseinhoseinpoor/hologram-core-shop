@@ -17,9 +17,8 @@ export class MediaRepository extends BaseRepository {
   }
 
   async findAll(isPublic: boolean, where?: {}) {
-    let extra: any = {isPublic: isPublic};
-    if(!isPublic)
-      extra = {...extra, createdBy: this.getUserInfo().id};
+    let extra: any = { isPublic: isPublic };
+    if (!isPublic) extra = { ...extra, createdBy: this.getUserInfo().id };
     return await this.find(Media, { ...where, active: true, ...extra });
   }
 

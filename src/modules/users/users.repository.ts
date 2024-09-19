@@ -20,7 +20,7 @@ export class UsersRepository extends BaseRepository {
   }
 
   async findOne(where: {}, relations?: {}) {
-    let users = await this.findAll({ ...where, deleted: false }, relations);
+    const users = await this.findAll({ ...where, deleted: false }, relations);
     return users?.length === 1 ? users[0] : null;
   }
 }
