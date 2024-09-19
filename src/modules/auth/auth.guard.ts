@@ -21,21 +21,32 @@ export class AuthGuard implements CanActivate {
       'isPublic',
       context.getHandler(),
     );
+    const isProvider = this.reflector.get<boolean>(
+      'isProvider',
+      context.getHandler(),
+    );
 
-    if (isPublic) {
-      return true;
-    }
+    if (isPublic) return true;
+
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
-    if (!token) throw new BadRequestException('Unauthorized user.');
+
+    let errMsg = 'Unauthorized user.';
+
+    if (!token) throw new BadRequestException(errMsg);
 
     try {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: jwtConstants.secure,
       });
+
+      if (isProvider && payload.domain != 2) {
+        errMsg = 'Unauthorized user domain.';
+        throw new BadRequestException(errMsg);
+      }
       request[USER_INFO_KEY] = payload;
-    } catch {
-      throw new BadRequestException('Unauthorized user.');
+    } catch (e) {
+      throw new BadRequestException(errMsg);
     }
     return true;
   }

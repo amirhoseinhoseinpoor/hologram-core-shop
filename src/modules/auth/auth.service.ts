@@ -23,11 +23,11 @@ export class AuthService {
 
     const payload = {
       id: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
+      username: user.username,
+      domain: user.domain,
       roles: roles,
     };
-    return { token: await this.jwtService.signAsync(payload) };
+    return { firstName: user.firstName, lastName: user.lastName, token: await this.jwtService.signAsync(payload) };
   }
 
   async signUp(dto: CreateUserDto): Promise<any> {

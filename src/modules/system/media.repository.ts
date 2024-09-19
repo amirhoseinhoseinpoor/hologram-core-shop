@@ -16,12 +16,15 @@ export class MediaRepository extends BaseRepository {
     return await this.getRepository(Media).save(this.By(media));
   }
 
-  async findAll(where?: {}) {
-    return await this.find(Media, { ...where, active: true });
+  async findAll(isPublic: boolean, where?: {}) {
+    let extra: any = {isPublic: isPublic};
+    if(!isPublic)
+      extra = {...extra, createdBy: this.getUserInfo().id};
+    return await this.find(Media, { ...where, active: true, ...extra });
   }
 
-  async findOne(where?: {}) {
-    const files = await this.findAll(where);
+  async findOne(isPublic: boolean, where?: {}) {
+    const files = await this.findAll(isPublic, where);
     return files?.length === 1 ? files[0] : null;
   }
 }

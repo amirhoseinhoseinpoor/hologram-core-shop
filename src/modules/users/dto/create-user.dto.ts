@@ -9,7 +9,9 @@ import {
   IsPositive,
   IsString,
   IsStrongPassword,
+  Max,
   MaxLength,
+  Min,
   MinLength,
 } from 'class-validator';
 
@@ -43,7 +45,7 @@ export class CreateUserDto {
   @IsOptional()
   email: string;
 
-  @ApiProperty()
+  @ApiProperty({default: 'u', description: `Values are 'f', 'm', 'u'`})
   @IsOptional()
   @IsString()
   @IsEnum(['f', 'm', 'u'])
@@ -68,6 +70,13 @@ export class CreateUserDto {
     },
   )
   password: string;
+
+  @ApiProperty({type: () => Number, default: 1, description: '1 => Customer, 2 => Provider'})
+  @IsNotEmpty()
+  @IsNumber()
+  @Min(1)  //Customer 1, Provider 2
+  @Max(2)
+  domain: number;
 
   @ApiProperty({ type: () => [Number] })
   @IsArray()
