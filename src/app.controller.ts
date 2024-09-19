@@ -1,6 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
 import { Public } from './core/decorator/public.decorator';
+import { Provider } from './core/decorator/provider.decorator';
 
 @Controller()
 export class AppController {

@@ -20,10 +20,10 @@ export class UsersController {
     return this.userService.findBy(dto);
   }
 
-  @Get('info/:username')
-  findInfo(@Param('username') username : string ) {
-    return this.userService.findInfo(username);
-  }
+  // @Get('info/:username')
+  // findInfo(@Param('username') username : string ) {
+  //   return this.userService.findInfo(username);
+  // }
 
   @UseInterceptors(TransactionInterceptor)
   @Delete(':code')

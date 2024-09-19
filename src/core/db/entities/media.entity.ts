@@ -16,6 +16,9 @@ export class Media extends BaseRetailEntity {
   @Column({ type: 'varchar', length: 255, nullable: false, unique: true })
   fileName: string;
 
+  @Column({ type: 'boolean', default: false })
+  isPublic: boolean = false;
+
   @Column({ type: 'boolean', default: true })
   active: boolean = true;
 }

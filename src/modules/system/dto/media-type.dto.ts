@@ -1,12 +1,20 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNumber } from "class-validator";
+import { IsBoolean, IsNumber, IsOptional, Max, Min } from "class-validator";
 
 export class MediaTypeDto {
-    @ApiProperty()
+    @ApiProperty({description: 'Unique Key'})
     tag: string;  
 
-    @ApiProperty()
+    @ApiProperty({default: 1, description: 'File extension type => 1: image, 2: video, ... , 9: other'})
     @IsNumber()
-    type: number;
+    @Min(1)
+    @Max(10)
+    type: number = 1
+
+    @ApiProperty({default: false})
+    @IsBoolean()
+    @IsOptional()
+    isPublic: boolean = false;
+
   }
   

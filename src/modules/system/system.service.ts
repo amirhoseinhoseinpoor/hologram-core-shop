@@ -5,15 +5,16 @@ import { Media } from 'src/core/db/entities/media.entity';
 import { createReadStream, readFileSync } from 'fs';
 import { join } from 'path';
 import { NOT_OK, OK } from 'src/core/misc/consts';
+import { MediaTypeDto } from './dto/media-type.dto';
 
 @Injectable()
 export class SystemService {
   constructor(private mediaRepo: MediaRepository) {}
 
-  async uploadFiles(tag: string, type: number, dto: MediaDto[]) {
+  async uploadFiles(info: MediaTypeDto, dto: MediaDto[]) {
     const files = [];
     dto?.forEach((d) =>
-      files.push({ tag: tag, type: type, ...d, active: true } as Media),
+      files.push({ tag: info.tag, type: +info.type, isPublic: info.isPublic, ...d, active: true } as Media),
     );
     const result = await this.mediaRepo.createOrUpdate(files);
     return result.map((res) => ({
@@ -44,4 +45,17 @@ export class SystemService {
       return NOT_OK;
     }
   }
+
+  async getPublicFiles(tag: string) {
+    // const res = await this.mediaRepo.findAll({ fileName: fileName });
+    // if (!res) return NOT_OK;
+    // res.active = false;
+    // try {
+    //   await this.mediaRepo.createOrUpdate([res]);
+    //   return OK;
+    // } catch (e) {
+    //   return NOT_OK;
+    // }
+  }
+
 }

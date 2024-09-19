@@ -33,6 +33,9 @@ export class User extends BaseRetailEntity {
   @Column({ type: 'varchar', length: 40, nullable: true })
   email: string;
 
+  @Column({ type: 'smallint', default: 1 })
+  domain: number = 1;
+
   @Column({ type: 'boolean', default: false })
   deleted: boolean = false;
 

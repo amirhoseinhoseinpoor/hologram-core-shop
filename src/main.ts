@@ -13,6 +13,14 @@ async function bootstrap() {
     credentials: true, // Allow cookies and authorization headers
   });
 
+  // app.use(function(req, res, next) {
+  //   res.set('Access-Control-Allow-Origin', 'https://localhost');
+  //   res.set('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
+  //   res.set('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+  //   res.set('Access-Control-Allow-Credentials', true);
+  //   next();
+  // });
+  
   // Swagger configuration
   const options = new DocumentBuilder()
     .addServer('http://localhost:7000/', 'Local environment')
