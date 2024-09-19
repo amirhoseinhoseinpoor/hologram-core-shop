@@ -3,6 +3,9 @@ import { BaseRetailEntity } from './base-retail.entity';
 
 @Entity('Products')
 export class Product extends BaseRetailEntity {
+  @Column({ type: 'varchar', length: 10, nullable: false, unique: true })
+  code: string;
+
   @Column({ type: 'varchar', length: 150, nullable: false })
   name: string;
 

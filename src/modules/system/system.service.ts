@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { MediaRepository } from './media.repository';
 import { MediaDto } from './dto/media-dto';
 import { Media } from 'src/core/db/entities/media.entity';
@@ -23,19 +23,8 @@ export class SystemService {
     }));
   }
 
-  downloadFile(filename: string) {
-    try {
-      return readFileSync(
-        join(process.cwd(), process.env.UPLOAD_LOCATION, filename),
-      );
-    } catch (e) {
-      return NOT_OK;
-    }
-    // return createReadStream(join(process.cwd(), process.env.UPLOAD_LOCATION ,filename));
-  }
-
   async removeFile(fileName: string) {
-    const res = await this.mediaRepo.findOne({ fileName: fileName });
+    const res = await this.mediaRepo.findOne(false, { fileName: fileName });
     if (!res) return NOT_OK;
     res.active = false;
     try {
@@ -46,16 +35,45 @@ export class SystemService {
     }
   }
 
-  async getPublicFiles(tag: string) {
-    // const res = await this.mediaRepo.findAll({ fileName: fileName });
-    // if (!res) return NOT_OK;
-    // res.active = false;
-    // try {
-    //   await this.mediaRepo.createOrUpdate([res]);
-    //   return OK;
-    // } catch (e) {
-    //   return NOT_OK;
-    // }
+  async getFiles(tag: string) {
+    const files = await this.mediaRepo.findAll(false, { tag: tag });
+    if (!files?.length) return [];
+    return files.map((f) => ({
+      fileName: f.fileName,
+      originalName: f.originalName,
+    }));
   }
 
+  async getFile(filename: string) {
+    const file = await this.mediaRepo.findOne(false, { fileName: filename });
+    if (!file) return [];
+    try {
+      return readFileSync(
+        join(process.cwd(), process.env.UPLOAD_LOCATION, filename),
+      );
+    } catch (e) {
+      return NOT_OK;
+    }
+  }
+
+  async getPublicFiles(tag: string) {
+    const files = await this.mediaRepo.findAll(true, { tag: tag });
+    if (!files?.length) return [];
+    return files.map((f) => ({
+      fileName: f.fileName,
+      originalName: f.originalName,
+    }));
+  }
+
+  async getPublicFile(filename: string) {
+    const file = await this.mediaRepo.findOne(true, { fileName: filename });
+    if (!file) return [];
+    try {
+      return readFileSync(
+        join(process.cwd(), process.env.UPLOAD_LOCATION, filename),
+      );
+    } catch (e) {
+      return NOT_OK;
+    }
+  }
 }

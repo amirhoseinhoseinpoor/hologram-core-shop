@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   Param,
-  Patch,
   Post,
   UploadedFiles,
   UseInterceptors,
@@ -33,19 +32,31 @@ export class SystemController {
     return this.sysService.uploadFiles(info, dto);
   }
 
-  @Get('download/:filename')
-  downloadFile(@Param('filename') filename: string) {
-    return this.sysService.downloadFile(filename);
+  @Post('download/list/:tag')
+  getFiles(@Param('tag') tag: string) {
+    return this.sysService.getFiles(tag);
   }
 
-  @Delete('media/:filename')
-  removeMedia(@Param('filename') filename: string) {
-    return this.sysService.removeFile(filename);
+  @Post('download/:filename')
+  getFile(@Param('filename') filename: string) {
+    return this.sysService.getFile(filename);
   }
 
-  @Get('media/:tag')
+
+  @Get('download/list/:tag')
   @Public()
   getPublicFiles(@Param('tag') tag: string) {
     return this.sysService.getPublicFiles(tag);
+  }
+
+  @Get('download/:filename')
+  @Public()
+  getPublicFile(@Param('filename') filename: string) {
+    return this.sysService.getPublicFile(filename);
+  }
+
+  @Delete('download/:filename')
+  removeFile(@Param('filename') filename: string) {
+    return this.sysService.removeFile(filename);
   }
 }

@@ -3,6 +3,7 @@ import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { TransactionInterceptor } from 'src/core/db/transaction.interceptor';
 import { FindUserDto } from './dto/find-user.dto';
+import { Provider } from 'src/core/decorator/provider.decorator';
 
 
 @Controller('users')
@@ -20,13 +21,9 @@ export class UsersController {
     return this.userService.findBy(dto);
   }
 
-  // @Get('info/:username')
-  // findInfo(@Param('username') username : string ) {
-  //   return this.userService.findInfo(username);
-  // }
-
   @UseInterceptors(TransactionInterceptor)
   @Delete(':code')
+  @Provider()
   remove(@Param('code') code: string) {
     return this.userService.remove(code);
   }

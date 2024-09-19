@@ -39,6 +39,7 @@ export class AuthGuard implements CanActivate {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: jwtConstants.secure,
       });
+
       if (isProvider && payload.domain != 2) {
         errMsg = 'Unauthorized user domain.';
         throw new BadRequestException(errMsg);
