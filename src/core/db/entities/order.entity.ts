@@ -30,5 +30,5 @@ export class Order extends BaseRetailEntity {
 //   owner: User;
 
   @Column('jsonb', { nullable: true })
-  product?: object[];//products list
+  products?: object[];//products list
 }
