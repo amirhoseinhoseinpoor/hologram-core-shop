@@ -2,12 +2,12 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { Product } from 'src/core/db/entities/product.entity';
-import { ProductRepository } from './order.repository';
+import { OrderRepository } from './order.repository';
 import { OK, getUID6 } from 'src/core/misc/consts';
 
 @Injectable()
 export class ProductService {
-  constructor(private repo: ProductRepository) {}
+  constructor(private repo: OrderRepository) {}
 
   async create(dto: CreateOrderDto) {
     let code = getUID6();

@@ -3,24 +3,29 @@ import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import { BaseRepository } from 'src/core/db/base.repository';
 import { DataSource } from 'typeorm';
-import { Product } from 'src/core/db/entities/product.entity';
+import { Order } from 'src/core/db/entities/order.entity';
 
 @Injectable({ scope: Scope.REQUEST })
-export class ProductRepository extends BaseRepository {
+export class OrderRepository extends BaseRepository {
   constructor(dataSource: DataSource, @Inject(REQUEST) req: Request) {
     super(dataSource, req);
   }
 
-  async createOrUpdate(product: Product) {
-    return await this.getRepository(Product).save(this.By(product));
+  async createOrUpdate(order: Order) {
+    return await this.getRepository(Order).save(this.By(order));
   }
 
   async findAll(where?: {}) {
-    return await this.find(Product, { ...where, deleted: false });
+    return await this.find(Order, { ...where, deleted: false });
   }
 
   async findOne(where: {}) {
-    let products = await this.findAll(where);
-    return products?.length === 1 ? products[0] : null;
+    let orders = await this.findAll(where);
+    return orders?.length === 1 ? orders[0] : null;
   }
+
+  // async findInfo(where: {}, relations?: {}) {
+  //   let order  = await this.findOne({ ...where, deleted: false }, relations);
+  //   return order ;
+  // }
 }
