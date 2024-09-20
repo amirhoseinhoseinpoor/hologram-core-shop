@@ -1,11 +1,17 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsArray, IsNotEmpty, IsObject, IsString } from "class-validator";
+import { User } from "src/core/db/entities/user.entity";
 
-export class CreateProductDto {
-    @ApiProperty()
-    @IsString()
-    @IsNotEmpty()
-    name: string;
+export class CreateOrderDto {
+    // @ApiProperty()
+    // @IsString()
+    // @IsNotEmpty()
+    // name: string;
+
+    // @ApiProperty()
+    // @IsObject()
+    // @IsNotEmpty()
+    // owner: User;
 
     @ApiProperty()
     @IsObject()
@@ -14,5 +20,5 @@ export class CreateProductDto {
 
     @ApiProperty({ type: () => [Object] })
     @IsArray()
-    media?: object[];
+    product?: object[];
 }

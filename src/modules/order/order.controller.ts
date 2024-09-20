@@ -8,7 +8,7 @@ import {
   Delete,
 } from '@nestjs/common';
 import { ProductService } from './order.service';
-import { CreateProductDto } from './dto/create-order.dto';
+import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateProductDto } from './dto/update-order.dto';
 import { Provider } from 'src/core/decorator/provider.decorator';
 import { Public } from 'src/core/decorator/public.decorator';
@@ -19,7 +19,7 @@ export class ProductController {
 
   @Post()
   @Provider()
-  create(@Body() dto: CreateProductDto) {
+  create(@Body() dto: CreateOrderDto) {
     return this.productService.create(dto);
   }
 
