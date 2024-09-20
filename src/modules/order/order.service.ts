@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateProductDto } from './dto/update-order.dto';
+import { UpdateOrderDto } from './dto/update-order.dto';
 import { Product } from 'src/core/db/entities/product.entity';
 import { ProductRepository } from './order.repository';
 import { OK, getUID6 } from 'src/core/misc/consts';
@@ -29,7 +29,7 @@ export class ProductService {
     });
   }
 
-  async update(code: string, dto: UpdateProductDto) {
+  async update(code: string, dto: UpdateOrderDto) {
     const product = await this.repo.findOne({ code: code });
     if (!product) throw new NotFoundException(`Product not found`);
     Object.assign(product, dto);
