@@ -13,38 +13,38 @@ import { UpdateOrderDto } from './dto/update-order.dto';
 import { Provider } from 'src/core/decorator/provider.decorator';
 import { Public } from 'src/core/decorator/public.decorator';
 
-@Controller('product')
-export class ProductController {
-  constructor(private readonly productService: OrderService) {}
+@Controller('order')
+export class OrderController {
+  constructor(private readonly orderService: OrderService) {}
 
   @Post()
   @Provider()
   create(@Body() dto: CreateOrderDto) {
-    return this.productService.create(dto);
+    return this.orderService.create(dto);
   }
 
   @Patch(':code')
   @Provider()
   update(@Param('code') code: string, @Body() dto: UpdateOrderDto) {
-    return this.productService.update(code, dto);
+    return this.orderService.update(code, dto);
   }
 
   @Get('list')
   @Public()
   findAll() {
-    return this.productService.findAll();
+    return this.orderService.findAll();
   }
 
   @Get(':code')
   @Public()
   findOne(@Param('code') code: string) {
-    return this.productService.findOne(code);
+    return this.orderService.findOne(code);
   }
 
   @Delete(':code')
   @Provider()
   deleteOne(@Param('code') code: string) {
-    return this.productService.update(code, {
+    return this.orderService.update(code, {
       deleted: true,
     } as UpdateOrderDto);
   }
