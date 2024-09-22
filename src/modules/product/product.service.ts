@@ -55,7 +55,7 @@ export class ProductService {
     if (!product) throw new NotFoundException(`Product not found`);
     Object.assign(product, dto);
     await this.repo.createOrUpdate({ ...product } as Product);
-    await this.repo.createOrUpdate({ ...product, id: id } as Product);
+    await this.repo.createOrUpdate({ ...product, code: code } as Product);
     return OK;
   }
 }
