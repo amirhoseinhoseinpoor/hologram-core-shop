@@ -10,6 +10,7 @@ import {
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
+import { AssignOrderDto } from './dto/assign-order.dto'; // create this dto for assign logic
 import { Provider } from 'src/core/decorator/provider.decorator';
 import { Public } from 'src/core/decorator/public.decorator';
 
@@ -17,35 +18,45 @@ import { Public } from 'src/core/decorator/public.decorator';
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
+  // Register an order
   @Post()
   @Provider()
   create(@Body() dto: CreateOrderDto) {
     return this.orderService.create(dto);
   }
 
-  @Patch(':code')
-  @Provider()
-  update(@Param('code') code: string, @Body() dto: UpdateOrderDto) {
-    return this.orderService.update(code, dto);
-  }
-
+  // List all orders
   @Get('list')
   @Public()
   findAll() {
     return this.orderService.findAll();
   }
 
-  @Get(':code')
+  // Get an order by tracking code
+  @Get(':tracking')
   @Public()
-  findOne(@Param('code') code: string) {
-    return this.orderService.findOne(code);
+  findOne(@Param('tracking') tracking: string) {
+    return this.orderService.findOne(tracking);
   }
 
-  @Delete(':code')
+  // Update an order by tracking code
+  @Patch(':tracking')
   @Provider()
-  deleteOne(@Param('code') code: string) {
-    return this.orderService.update(code, {
-      deleted: true,
-    } as UpdateOrderDto);
+  update(@Param('tracking') tracking: string, @Body() dto: UpdateOrderDto) {
+    return this.orderService.update(tracking, dto);
+  }
+
+  // Delete an order by tracking code
+  @Delete(':tracking')
+  @Provider()
+  deleteOne(@Param('tracking') tracking: string) {
+    return this.orderService.delete(tracking); // Assuming `delete` is a method in the service
+  }
+
+  // Assign an order from one user to another
+  @Patch('assign')
+  @Provider()
+  assign(@Body() dto: AssignOrderDto) {
+    return this.orderService.assignOrder(dto.tracking, dto.from, dto.to);
   }
 }

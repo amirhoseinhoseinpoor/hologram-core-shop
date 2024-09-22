@@ -7,8 +7,8 @@ export class Order extends BaseRetailEntity {
   @Column({ type: 'varchar', length: 10, nullable: false, unique: true })
   code: string;
 
-//   @Column({ type: 'varchar', length: 150, nullable: false })
-//   name: string;
+  @Column({ type: 'varchar', length: 15, nullable: true })
+  ownerId: string;
 
   @Column({ type: 'boolean', nullable: false, default: false })
   paid: boolean = false;//Order paid or not
@@ -25,9 +25,6 @@ export class Order extends BaseRetailEntity {
 
   @Column('jsonb', { nullable: false, default: {} })
   info: object;
-
-//   @Column('jsonb', { nullable: false, default: {} })
-//   owner: User;
 
   @Column('jsonb', { nullable: true })
   products?: object[];//products list
