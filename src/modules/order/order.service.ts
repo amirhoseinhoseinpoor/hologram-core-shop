@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import { AssignOrderDto } from './dto/assign-order.dto'; // Added AssignOrderDto import
 import { Order } from 'src/core/db/entities/order.entity';
 import { OrderRepository } from './order.repository';
 import { OK, getUID6 } from 'src/core/misc/consts';
@@ -12,7 +11,7 @@ export class OrderService {
 
   // Create a new order
   async create(dto: CreateOrderDto) {
-    let code = getUID6(); // Generate unique tracking code
+    let code = getUID6();
     await this.repo.createOrUpdate({ 
       ...dto, 
       code: code, 

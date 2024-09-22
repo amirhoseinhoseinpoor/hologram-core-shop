@@ -10,7 +10,7 @@ import {
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import { AssignOrderDto } from './dto/assign-order.dto'; // create this dto for assign logic
+import { AssignOrderDto } from './dto/assign-order.dto';
 import { Provider } from 'src/core/decorator/provider.decorator';
 import { Public } from 'src/core/decorator/public.decorator';
 
@@ -50,7 +50,7 @@ export class OrderController {
   @Delete(':tracking')
   @Provider()
   deleteOne(@Param('tracking') tracking: string) {
-    return this.orderService.delete(tracking); // Assuming `delete` is a method in the service
+    return this.orderService.delete(tracking);
   }
 
   // Assign an order from one user to another
