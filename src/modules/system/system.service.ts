@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, StreamableFile } from '@nestjs/common';
 import { MediaRepository } from './media.repository';
 import { MediaDto } from './dto/media-dto';
 import { Media } from 'src/core/db/entities/media.entity';
@@ -65,15 +65,21 @@ export class SystemService {
     }));
   }
 
-  async getPublicFile(filename: string) {
+  async getPublicFile(filename: string): Promise<StreamableFile | string> {
     const file = await this.mediaRepo.findOne(true, { fileName: filename });
-    if (!file) return [];
+    if (!file) return 'File not found';
+
     try {
-      return readFileSync(
-        join(process.cwd(), process.env.UPLOAD_LOCATION, filename),
+      const filePath = join(
+        process.cwd(),
+        process.env.UPLOAD_LOCATION,
+        filename,
       );
+      const fileStream = createReadStream(filePath);
+      return new StreamableFile(fileStream);
     } catch (e) {
-      return NOT_OK;
+      console.error('Error reading file:', e);
+      return 'Error reading file';
     }
   }
 }
