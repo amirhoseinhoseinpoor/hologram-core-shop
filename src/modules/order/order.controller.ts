@@ -11,7 +11,6 @@ import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { Provider } from 'src/core/decorator/provider.decorator';
-import { Public } from 'src/core/decorator/public.decorator';
 
 @Controller('order')
 export class OrderController {
@@ -73,7 +72,7 @@ export class OrderController {
     return this.orderService.findAll();
   }
 
-  @Get(':code')
+  @Get('find/:code')
   findOne(@Param('code') code: string) {
     return this.orderService.findOne(code);
   }
@@ -81,6 +80,6 @@ export class OrderController {
   @Delete(':code')
   @Provider()
   deleteOne(@Param('code') code: string) {
-    return this.orderService.update(code, { deleted: true } as UpdateOrderDto);
+    return this.orderService.delete(code);
   }
 }
