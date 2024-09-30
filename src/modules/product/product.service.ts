@@ -3,14 +3,14 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from 'src/core/db/entities/product.entity';
 import { ProductRepository } from './product.repository';
-import { OK, getUID6 } from 'src/core/misc/consts';
+import { OK, genUID } from 'src/core/misc/consts';
 
 @Injectable()
 export class ProductService {
   constructor(private repo: ProductRepository) {}
 
   async create(dto: CreateProductDto) {
-    let code = getUID6();
+    let code = genUID();
     await this.repo.createOrUpdate({ ...dto, code: code, active: true, deleted: false } as Product);
     return {code: code, ...OK};
   }

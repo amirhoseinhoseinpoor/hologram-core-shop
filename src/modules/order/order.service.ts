@@ -1,16 +1,22 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
 import { Order } from 'src/core/db/entities/order.entity';
 import { OrderRepository } from './order.repository';
-import { OK, getUID6 } from 'src/core/misc/consts';
+import { OK, genUID } from 'src/core/misc/consts';
+import { RequestOrderDto } from './dto/request-order.dto';
+import { ReqCommentOrderDto } from './dto/reqComment-order-dto';
+import { DocumentOrderDto } from './dto/document-order-dto';
+import { DocCommentOrderDto } from './dto/docComment-order.dto';
+import { ChatOrderDto } from './dto/chat-order.dto';
+import { DeliveryOrderDto } from './dto/delivery-order.dto';
+import { PaymentOrderDto } from './dto/payment-order.dto';
+import { OtherOrderDto } from './dto/other-order.dto';
 
 @Injectable()
 export class OrderService {
   constructor(private repo: OrderRepository) {}
 
-  async create(dto: CreateOrderDto) {
-    let code = getUID6();
+  async create(dto: RequestOrderDto) {
+    let code = genUID();
     await this.repo.createOrUpdate({
       ...dto,
       code: code,
@@ -51,7 +57,7 @@ export class OrderService {
     });
   }
 
-  async update(code: string, dto: UpdateOrderDto) {
+  async update(code: string, dto: ReqCommentOrderDto | DocumentOrderDto | DocCommentOrderDto | ChatOrderDto | DeliveryOrderDto | PaymentOrderDto | OtherOrderDto) {
     const order = await this.repo.findOne({ code: code });
     if (!order) throw new NotFoundException(`Order not found`);
     Object.assign(order, dto);

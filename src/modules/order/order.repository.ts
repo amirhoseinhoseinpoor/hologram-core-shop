@@ -24,8 +24,4 @@ export class OrderRepository extends BaseRepository {
     return orders?.length === 1 ? orders[0] : null;
   }
 
-  // async findInfo(where: {}, relations?: {}) {
-  //   let order  = await this.findOne({ ...where, deleted: false }, relations);
-  //   return order ;
-  // }
 }
