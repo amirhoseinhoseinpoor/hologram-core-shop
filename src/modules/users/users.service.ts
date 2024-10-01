@@ -5,7 +5,7 @@ import { UsersRepository } from './users.repository';
 import { UserRolesService } from '../user-roles/user-roles.service';
 import { User } from 'src/core/db/entities/user.entity';
 import * as bcrypt from 'bcrypt';
-import { OK, getUID6, ok } from 'src/core/misc/consts';
+import { OK, genUID, ok } from 'src/core/misc/consts';
 import { FindUserDto } from './dto/find-user.dto';
 
 @Injectable()
@@ -30,7 +30,7 @@ export class UsersService {
     if (oldUser?.username) throw new BadRequestException('Username exists.');
     await this.userRoleService.exists(dto.roleIds);
     const newUser = await this.asUser(dto);
-    newUser.code = getUID6('U');
+    newUser.code = genUID(6, 'U');
     const res = await this.repo.createOrUpdate(newUser);
     await this.userRoleService.create(res.id, dto.roleIds);
     return OK;

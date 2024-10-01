@@ -1,0 +1,75 @@
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { Order } from 'src/core/db/entities/order.entity';
+import { OrderRepository } from './order.repository';
+import { OK, genUID } from 'src/core/misc/consts';
+import { RequestOrderDto } from './dto/request-order.dto';
+import { ReqCommentOrderDto } from './dto/reqComment-order-dto';
+import { DocumentOrderDto } from './dto/document-order-dto';
+import { DocCommentOrderDto } from './dto/docComment-order.dto';
+import { ChatOrderDto } from './dto/chat-order.dto';
+import { DeliveryOrderDto } from './dto/delivery-order.dto';
+import { PaymentOrderDto } from './dto/payment-order.dto';
+import { OtherOrderDto } from './dto/other-order.dto';
+
+@Injectable()
+export class OrderService {
+  constructor(private repo: OrderRepository) {}
+
+  async create(dto: RequestOrderDto) {
+    let code = genUID();
+    await this.repo.createOrUpdate({
+      ...dto,
+      code: code,
+      deleted: false,
+    } as Order);
+    return { code: code, ...OK };
+  }
+
+  async findOne(code: string) {
+    const order = await this.repo.findOne({ code: code });
+    if (!order) throw new NotFoundException(`Order not found`);
+    return {
+      code: order.code,
+      request: order.request,
+      reqComment: order.reqComment,
+      document: order.document,
+      docComment: order.docComment,
+      chat: order.chat,
+      delivery: order.delivery,
+      payment: order.payment
+    };
+  }
+
+  async findAll() {
+    const orders = await this.repo.findAll();
+    if (!orders?.length) return [];
+    return orders.map((order) => {
+      return {
+        code: order.code,
+        request: order.request,
+        reqComment: order.reqComment,
+        document: order.document,
+        docComment: order.docComment,
+        chat: order.chat,
+        delivery: order.delivery,
+        payment: order.payment
+      };
+    });
+  }
+
+  async update(code: string, dto: ReqCommentOrderDto | DocumentOrderDto | DocCommentOrderDto | ChatOrderDto | DeliveryOrderDto | PaymentOrderDto | OtherOrderDto) {
+    const order = await this.repo.findOne({ code: code });
+    if (!order) throw new NotFoundException(`Order not found`);
+    Object.assign(order, dto);
+    await this.repo.createOrUpdate({ ...order } as Order);
+    return OK;
+  }
+
+  async delete(code: string) {
+    const order = await this.repo.findOne({ code: code });
+    if (!order) throw new NotFoundException(`Order not found`);
+    // Object.assign(order, dto);
+    await this.repo.createOrUpdate({ ...order } as Order);
+    return OK;
+  }
+}
