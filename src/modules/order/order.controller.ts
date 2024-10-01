@@ -29,7 +29,10 @@ export class OrderController {
 
   @Patch('request/:code/comment')
   @Provider()
-  UpdateRequestComment(@Param('code') code: string, @Body() dto: ReqCommentOrderDto) {
+  UpdateRequestComment(
+    @Param('code') code: string,
+    @Body() dto: ReqCommentOrderDto,
+  ) {
     return this.orderService.update(code, dto);
   }
 
@@ -40,7 +43,10 @@ export class OrderController {
 
   @Patch('document/:code/comment')
   @Provider()
-  UpdateDocumentComment(@Param('code') code: string, @Body() dto: DocCommentOrderDto) {
+  UpdateDocumentComment(
+    @Param('code') code: string,
+    @Body() dto: DocCommentOrderDto,
+  ) {
     return this.orderService.update(code, dto);
   }
 
@@ -62,7 +68,10 @@ export class OrderController {
   @Patch('status/:code/:status')
   @Provider()
   UpdateStatus(@Param('code') code: string, @Param('status') status: string) {
-    return this.orderService.update(code, { status: +status, deleted: false } as OtherOrderDto);
+    return this.orderService.update(code, {
+      status: +status,
+      deleted: false,
+    } as OtherOrderDto);
   }
 
   @Get('list')

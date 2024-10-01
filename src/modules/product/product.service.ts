@@ -11,8 +11,13 @@ export class ProductService {
 
   async create(dto: CreateProductDto) {
     let code = genUID();
-    await this.repo.createOrUpdate({ ...dto, code: code, active: true, deleted: false } as Product);
-    return {code: code, ...OK};
+    await this.repo.createOrUpdate({
+      ...dto,
+      code: code,
+      active: true,
+      deleted: false,
+    } as Product);
+    return { code: code, ...OK };
   }
 
   async findOne(code: string) {
@@ -43,7 +48,7 @@ export class ProductService {
     const product = await this.repo.findOne({ code: code });
     if (!product) throw new NotFoundException(`Product not found`);
     Object.assign(product, dto);
-    await this.repo.createOrUpdate({...product, code: code} as Product);
+    await this.repo.createOrUpdate({ ...product, code: code } as Product);
     return OK;
   }
 }

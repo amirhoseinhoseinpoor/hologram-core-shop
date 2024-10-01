@@ -36,7 +36,7 @@ export class OrderService {
       docComment: order.docComment,
       chat: order.chat,
       delivery: order.delivery,
-      payment: order.payment
+      payment: order.payment,
     };
   }
 
@@ -52,12 +52,22 @@ export class OrderService {
         docComment: order.docComment,
         chat: order.chat,
         delivery: order.delivery,
-        payment: order.payment
+        payment: order.payment,
       };
     });
   }
 
-  async update(code: string, dto: ReqCommentOrderDto | DocumentOrderDto | DocCommentOrderDto | ChatOrderDto | DeliveryOrderDto | PaymentOrderDto | OtherOrderDto) {
+  async update(
+    code: string,
+    dto:
+      | ReqCommentOrderDto
+      | DocumentOrderDto
+      | DocCommentOrderDto
+      | ChatOrderDto
+      | DeliveryOrderDto
+      | PaymentOrderDto
+      | OtherOrderDto,
+  ) {
     const order = await this.repo.findOne({ code: code });
     if (!order) throw new NotFoundException(`Order not found`);
     Object.assign(order, dto);

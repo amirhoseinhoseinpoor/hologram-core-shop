@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable, NotFoundException, StreamableFile } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  StreamableFile,
+} from '@nestjs/common';
 import { MediaRepository } from './media.repository';
 import { MediaDto } from './dto/media-dto';
 import { Media } from 'src/core/db/entities/media.entity';

@@ -10,6 +10,7 @@ import { AuthGuard } from './modules/auth/auth.guard';
 import { UsersModule } from './modules/users/users.module';
 import { RolesModule } from './modules/roles/roles.module';
 import { UserRolesModule } from './modules/user-roles/user-roles.module';
+import { OrderModule } from './modules/order/order.module';
 import { SystemModule } from './modules/system/system.module';
 import { ProductModule } from './modules/product/product.module';
 
@@ -20,6 +21,7 @@ import { ProductModule } from './modules/product/product.module';
     RolesModule,
     UserRolesModule,
     SystemModule,
+    OrderModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',

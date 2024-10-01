@@ -23,5 +23,4 @@ export class OrderRepository extends BaseRepository {
     let orders = await this.findAll(where);
     return orders?.length === 1 ? orders[0] : null;
   }
-
 }
