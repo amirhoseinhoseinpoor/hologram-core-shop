@@ -17,6 +17,7 @@ import { ChatOrderDto } from './dto/chat-order.dto';
 import { DeliveryOrderDto } from './dto/delivery-order.dto';
 import { PaymentOrderDto } from './dto/payment-order.dto';
 import { OtherOrderDto } from './dto/other-order.dto';
+import { get } from 'http';
 
 @Controller('order')
 export class OrderController {
@@ -82,6 +83,20 @@ export class OrderController {
   @Get('find/:code')
   findOne(@Param('code') code: string) {
     return this.orderService.findOne(code);
+  }
+
+  @Patch('step/:code/:step')
+  // @Provider()
+  UpdateStep(@Param('code') code: string, @Param('step') step: string) {
+    return this.orderService.update(code, {
+      step: +step,
+      deleted: false,
+    } as OtherOrderDto);
+  }
+
+  @Get('findById/:createdBy')
+  findById(@Param('createdBy') createdBy: string) {
+    return this.orderService.findById(createdBy);
   }
 
   @Delete(':code')

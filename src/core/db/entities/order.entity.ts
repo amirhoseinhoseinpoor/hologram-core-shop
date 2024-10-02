@@ -10,6 +10,9 @@ export class Order extends BaseRetailEntity {
   @Column({ type: 'smallint', default: 1, nullable: false, unique: false })
   status: number = 1;
 
+  @Column({ type: 'smallint', default: 1, nullable: false, unique: false })
+  step: number = 1;
+
   @Column({ type: 'boolean', default: false })
   deleted: boolean = false;
 

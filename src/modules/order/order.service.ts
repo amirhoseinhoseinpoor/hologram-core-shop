@@ -40,6 +40,24 @@ export class OrderService {
     };
   }
 
+  async findById(createdBy: string) {
+    const orders = await this.repo.findById({ createdBy: createdBy });
+    if (!orders || orders.length === 0) {
+      throw new NotFoundException(`Order not found`);
+    }
+    return orders.map((order) => ({
+      code: order.code,
+      status: order.status,
+      request: order.request,
+      reqComment: order.reqComment,
+      document: order.document,
+      docComment: order.docComment,
+      chat: order.chat,
+      delivery: order.delivery,
+      payment: order.payment,
+    }));
+  }
+
   async findAll() {
     const orders = await this.repo.findAll();
     if (!orders?.length) return [];

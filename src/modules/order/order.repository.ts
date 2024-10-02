@@ -23,4 +23,16 @@ export class OrderRepository extends BaseRepository {
     let orders = await this.findAll(where);
     return orders?.length === 1 ? orders[0] : null;
   }
+
+  async findById(where: { createdBy: string }) {
+    const orders = await this.getRepository(Order).find({
+      where: { createdBy: +where.createdBy },
+    });
+
+    if (!orders || orders.length === 0) {
+      return null;
+    }
+
+    return orders;
+  }
 }
