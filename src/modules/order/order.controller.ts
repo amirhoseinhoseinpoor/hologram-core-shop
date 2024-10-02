@@ -94,9 +94,9 @@ export class OrderController {
     } as OtherOrderDto);
   }
 
-  @Get('findById/:createdBy')
-  findById(@Param('createdBy') createdBy: string) {
-    return this.orderService.findById(createdBy);
+  @Get('findById')
+  findById() {
+    return this.orderService.findById();
   }
 
   @Delete(':code')

@@ -3,11 +3,16 @@ import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import { BaseRepository } from 'src/core/db/base.repository';
 import { Order } from 'src/core/db/entities/order.entity';
+import { USER_INFO_KEY } from 'src/core/misc/consts';
 import { DataSource } from 'typeorm';
+import { BadRequestException } from '@nestjs/common';
 
 @Injectable({ scope: Scope.REQUEST })
 export class OrderRepository extends BaseRepository {
-  constructor(dataSource: DataSource, @Inject(REQUEST) req: Request) {
+  constructor(
+    dataSource: DataSource,
+    @Inject(REQUEST) private req: Request,
+  ) {
     super(dataSource, req);
   }
 
@@ -24,9 +29,15 @@ export class OrderRepository extends BaseRepository {
     return orders?.length === 1 ? orders[0] : null;
   }
 
-  async findById(where: { createdBy: string }) {
+  async findById() {
+    const userInfo = this.req[USER_INFO_KEY];
+
+    if (!userInfo || !userInfo.id) {
+      throw new BadRequestException('User ID not found in token');
+    }
+
     const orders = await this.getRepository(Order).find({
-      where: { createdBy: +where.createdBy },
+      where: { createdBy: userInfo.id },
     });
 
     if (!orders || orders.length === 0) {

@@ -2,9 +2,9 @@ import {
   Body,
   Controller,
   Delete,
-  Get,
   Param,
   Patch,
+  Post,
   UseInterceptors,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
@@ -23,7 +23,7 @@ export class UsersController {
     return this.userService.update(code, dto);
   }
 
-  @Get()
+  @Post()
   find(@Body() dto: FindUserDto) {
     return this.userService.findBy(dto);
   }

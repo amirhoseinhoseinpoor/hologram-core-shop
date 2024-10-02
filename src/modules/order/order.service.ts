@@ -40,8 +40,8 @@ export class OrderService {
     };
   }
 
-  async findById(createdBy: string) {
-    const orders = await this.repo.findById({ createdBy: createdBy });
+  async findById() {
+    const orders = await this.repo.findById();
     if (!orders || orders.length === 0) {
       throw new NotFoundException(`Order not found`);
     }
