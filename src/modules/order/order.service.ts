@@ -64,6 +64,10 @@ export class OrderService {
     return orders.map((order) => {
       return {
         code: order.code,
+        createdBy: order.createdBy,
+        date: order.createdAt,
+        status: order.status,
+        step: order.step,
         request: order.request,
         reqComment: order.reqComment,
         document: order.document,

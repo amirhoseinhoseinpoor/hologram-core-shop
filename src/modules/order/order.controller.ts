@@ -67,7 +67,7 @@ export class OrderController {
   }
 
   @Patch('status/:code/:status')
-  @Provider()
+  // @Provider()
   UpdateStatus(@Param('code') code: string, @Param('status') status: string) {
     return this.orderService.update(code, {
       status: +status,
