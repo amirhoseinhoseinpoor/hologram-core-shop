@@ -21,7 +21,7 @@ import { get } from 'http';
 
 @Controller('order')
 export class OrderController {
-  constructor(private readonly orderService: OrderService) {}
+  constructor(private readonly orderService: OrderService) { }
 
   @Post('request')
   createRequest(@Body() dto: RequestOrderDto) {
@@ -29,7 +29,7 @@ export class OrderController {
   }
 
   @Patch('request/:code/comment')
-  @Provider()
+  // @Provider()
   UpdateRequestComment(
     @Param('code') code: string,
     @Body() dto: ReqCommentOrderDto,
