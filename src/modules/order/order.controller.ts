@@ -29,7 +29,7 @@ export class OrderController {
   }
 
   @Patch('request/:code/comment')
-  @Provider()
+  // @Provider()
   UpdateRequestComment(
     @Param('code') code: string,
     @Body() dto: ReqCommentOrderDto,
@@ -43,7 +43,7 @@ export class OrderController {
   }
 
   @Patch('document/:code/comment')
-  @Provider()
+  // @Provider()
   UpdateDocumentComment(
     @Param('code') code: string,
     @Body() dto: DocCommentOrderDto,
