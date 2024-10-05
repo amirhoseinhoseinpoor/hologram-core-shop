@@ -48,6 +48,7 @@ export class OrderService {
     return orders.map((order) => ({
       code: order.code,
       status: order.status,
+      step: order.step,
       request: order.request,
       reqComment: order.reqComment,
       document: order.document,

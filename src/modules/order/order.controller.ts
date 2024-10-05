@@ -43,7 +43,7 @@ export class OrderController {
   }
 
   @Patch('document/:code/comment')
-  @Provider()
+  // @Provider()
   UpdateDocumentComment(
     @Param('code') code: string,
     @Body() dto: DocCommentOrderDto,
