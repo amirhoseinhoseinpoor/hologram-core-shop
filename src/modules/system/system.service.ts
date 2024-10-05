@@ -49,6 +49,7 @@ export class SystemService {
   async getFiles(tag: string) {
     const files = await this.mediaRepo.findAll(false, { tag: tag });
     if (!files?.length) return [];
+
     return files.map((f) => ({
       fileName: f.fileName,
       originalName: f.originalName,
@@ -59,9 +60,17 @@ export class SystemService {
     const file = await this.mediaRepo.findOne(false, { fileName: filename });
     if (!file) return [];
     try {
-      return readFileSync(
-        join(process.cwd(), process.env.UPLOAD_LOCATION, filename),
+      // return readFileSync(
+      //   join(process.cwd(), process.env.UPLOAD_LOCATION, filename),
+      // );
+      const filePath = join(
+        process.cwd(),
+        process.env.UPLOAD_LOCATION,
+        filename,
       );
+      const fileStream = createReadStream(filePath);
+      return new StreamableFile(fileStream);
+
     } catch (e) {
       return NOT_OK;
     }
