@@ -70,7 +70,6 @@ export class SystemService {
       );
       const fileStream = createReadStream(filePath);
       return new StreamableFile(fileStream);
-
     } catch (e) {
       return NOT_OK;
     }
