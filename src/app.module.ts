@@ -13,6 +13,7 @@ import { UserRolesModule } from './modules/user-roles/user-roles.module';
 import { OrderModule } from './modules/order/order.module';
 import { SystemModule } from './modules/system/system.module';
 import { ProductModule } from './modules/product/product.module';
+import { VideoModule } from './modules/video/video.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { ProductModule } from './modules/product/product.module';
       entities: [join(__dirname, '**', '*.entity.{ts,js}')],
     }),
     ProductModule,
+    VideoModule,
   ],
   controllers: [AppController],
   providers: [
