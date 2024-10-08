@@ -16,6 +16,12 @@ export class VideoController {
         return this.videoService.create(dto);
     }
 
+    @Patch(':code')
+    // @Provider()
+    update(@Param('code') code: string, @Body() dto: UpdateVideoDto) {
+        return this.videoService.update(code, dto);
+    }
+
     @Get('list')
     @Public()
     findAll() {

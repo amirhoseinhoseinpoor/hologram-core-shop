@@ -2,7 +2,7 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { Video } from "src/core/db/entities/video.entity";
 import { VideoRepository } from "./video.repository";
-import { OK , genUID } from 'src/core/misc/consts';
+import { OK, genUID } from 'src/core/misc/consts';
 import { UpdateVideoDto } from './dto/update-video.dto';
 import { CreateVideoDto } from './dto/create-video.dto';
 
@@ -18,7 +18,7 @@ export class VideoService {
             active: true,
             deleted: false,
         } as Video)
-        return {code: code, ...OK}
+        return { code: code, ...OK }
     }
 
     async findAll() {
@@ -26,7 +26,7 @@ export class VideoService {
         if (!video?.length) return [];
         return video.map((vid) => {
             return {
-                code: vid.code, 
+                code: vid.code,
                 media: vid.media,
             }
         });
@@ -38,5 +38,5 @@ export class VideoService {
         Object.assign(product, dto);
         await this.repo.createOrUpdate({ ...product, code: code } as Video);
         return OK;
-      }
+    }
 }

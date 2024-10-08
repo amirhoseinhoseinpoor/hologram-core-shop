@@ -14,6 +14,7 @@ import { OrderModule } from './modules/order/order.module';
 import { SystemModule } from './modules/system/system.module';
 import { ProductModule } from './modules/product/product.module';
 import { VideoModule } from './modules/video/video.module';
+import { HonorsModule } from './modules/honors/honors.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { VideoModule } from './modules/video/video.module';
     }),
     ProductModule,
     VideoModule,
+    HonorsModule,
   ],
   controllers: [AppController],
   providers: [
