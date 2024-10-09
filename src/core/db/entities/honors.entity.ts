@@ -10,6 +10,12 @@ export class Honors extends BaseRetailEntity {
     @Column({ type: 'varchar', nullable: false, unique: false, length: 225 })
     title: string;
 
+    @Column({ type: 'varchar' , nullable:true , unique: false , length: 225})
+    tags: string
+
+    @Column({ type: 'varchar' , nullable:true , unique: false , length: 150})
+    src: string
+
     @Column({ type: 'boolean', nullable: false, default: true })
     active: boolean = true;
 

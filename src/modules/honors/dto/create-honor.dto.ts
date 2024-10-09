@@ -7,6 +7,16 @@ export class CreateHonorDto {
   @IsString()
   title : String;
 
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  src : String;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  tags : String;
+
   @ApiProperty({ type: () => [Object] })
   @IsNotEmpty()
   @IsArray()

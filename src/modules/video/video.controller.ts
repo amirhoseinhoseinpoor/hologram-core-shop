@@ -29,7 +29,7 @@ export class VideoController {
     }
 
     @Delete(':code')
-    @Provider()
+    // @Provider()
     deleteOne(@Param('code') code: string) {
         return this.videoService.update(code, {
             deleted: true,
