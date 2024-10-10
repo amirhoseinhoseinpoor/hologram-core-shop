@@ -15,6 +15,7 @@ import { SystemModule } from './modules/system/system.module';
 import { ProductModule } from './modules/product/product.module';
 import { VideoModule } from './modules/video/video.module';
 import { HonorsModule } from './modules/honors/honors.module';
+import { ExhibitionModule } from './modules/exhibition/exhibition.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { HonorsModule } from './modules/honors/honors.module';
     ProductModule,
     VideoModule,
     HonorsModule,
+    ExhibitionModule,
   ],
   controllers: [AppController],
   providers: [
