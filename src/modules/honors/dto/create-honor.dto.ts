@@ -1,24 +1,24 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty , IsString, IsArray } from "class-validator";
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsString, IsArray } from 'class-validator';
 
 export class CreateHonorDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  title : String;
+  title: String;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  src : String;
+  src: String;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  tags : String;
+  tags: String;
 
   @ApiProperty({ type: () => [Object] })
   @IsNotEmpty()
   @IsArray()
-  content : Object[]
+  content: Object[];
 }

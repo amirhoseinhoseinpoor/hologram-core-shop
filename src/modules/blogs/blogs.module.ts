@@ -5,6 +5,6 @@ import { BlogsRepository } from './blogs.repository';
 
 @Module({
   controllers: [BlogsController],
-  providers: [BlogsService , BlogsRepository]
+  providers: [BlogsService, BlogsRepository],
 })
 export class BlogsModule {}

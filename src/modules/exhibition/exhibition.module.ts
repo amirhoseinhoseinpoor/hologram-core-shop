@@ -5,6 +5,6 @@ import { ExhibitionRepository } from './exhibition.repository';
 
 @Module({
   controllers: [ExhibitionController],
-  providers: [ExhibitionService , ExhibitionRepository]
+  providers: [ExhibitionService, ExhibitionRepository],
 })
 export class ExhibitionModule {}
