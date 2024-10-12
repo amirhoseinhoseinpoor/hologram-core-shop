@@ -7,6 +7,7 @@ import { Provider } from 'src/core/decorator/provider.decorator';
 
 @Controller('honors')
 export class HonorsController {
+    
     constructor(private readonly honorsService: HonorsService) { }
 
     @Post()
