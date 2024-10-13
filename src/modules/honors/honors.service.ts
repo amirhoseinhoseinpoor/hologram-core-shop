@@ -37,6 +37,7 @@ export class HonorsService {
       return {
         code: honor.code,
         title: honor.title,
+        date: honor.createdAt,
         src: honor.src,
         tags: honor.tags,
         content: honor.content,
