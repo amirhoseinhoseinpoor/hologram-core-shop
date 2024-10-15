@@ -25,6 +25,7 @@ export class BlogsService {
     if (!blogs) throw new NotFoundException(`Blogs not found`);
     return {
       code: blogs.code,
+      date: blogs.createdAt,
       content: blogs.content,
     };
   }
@@ -35,7 +36,7 @@ export class BlogsService {
     return blogs.map((honor) => {
       return {
         code: honor.code,
-        src: honor.src,
+        date: honor.createdAt,
         content: honor.content,
       };
     });
