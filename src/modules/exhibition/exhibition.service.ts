@@ -37,6 +37,7 @@ export class ExhibitionService {
       return {
         code: ex.code,
         title: ex.title,
+        date: ex.createdAt,
         src: ex.src,
         tags: ex.tags,
         content: ex.content,

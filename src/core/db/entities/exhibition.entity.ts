@@ -21,6 +21,6 @@ export class Exhibition extends BaseRetailEntity {
   @Column({ type: 'boolean', default: false })
   deleted: boolean = false;
 
-  @Column('jsonb', { nullable: true, unique: false })
+  @Column({ type: 'text', nullable: true })
   content: string;
 }

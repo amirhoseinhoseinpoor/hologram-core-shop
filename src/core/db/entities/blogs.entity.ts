@@ -9,12 +9,15 @@ export class Blogs extends BaseRetailEntity {
   @Column({ type: 'varchar', nullable: true, unique: false, length: 150 })
   src: string;
 
+  @Column({ type: 'varchar', nullable: true, unique: false, length: 225 })
+  tags: string;
+
   @Column({ type: 'boolean', nullable: false, default: true })
   active: boolean = true;
 
   @Column({ type: 'boolean', default: false })
   deleted: boolean = false;
 
-  @Column('jsonb', { nullable: false, unique: false, default: {} })
-  content: object;
+  @Column({ type: 'text', nullable: true })
+  content: string;
 }

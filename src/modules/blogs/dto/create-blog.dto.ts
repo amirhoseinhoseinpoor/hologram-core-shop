@@ -7,6 +7,11 @@ export class CreateBlogDto {
   @IsString()
   src: String;
 
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  tags: String;
+
   @ApiProperty({ type: () => [Object] })
   @IsNotEmpty()
   @IsArray()
