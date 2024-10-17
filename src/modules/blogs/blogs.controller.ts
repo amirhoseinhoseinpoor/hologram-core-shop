@@ -1,11 +1,12 @@
 import {
-    Controller,
-    Get,
-    Param,
-    Patch,
-    Post,
-    Body,
-    Delete,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Body,
+  Delete,
+  Query,
 } from '@nestjs/common';
 
 import { BlogsService } from './blogs.service';
@@ -17,9 +18,9 @@ import { Provider } from 'src/core/decorator/provider.decorator';
 
 @Controller('blogs')
 export class BlogsController {
-    constructor(private readonly blogsService: BlogsService) {}
+  constructor(private readonly blogsService: BlogsService) { }
 
-    @Post()
+  @Post()
   // @Provider()
   create(@Body() dto: CreateBlogDto) {
     return this.blogsService.create(dto);
@@ -37,6 +38,13 @@ export class BlogsController {
     return this.blogsService.findAll();
   }
 
+  @Get('listPaginated')
+  @Public()
+  async findAllPaginated(@Query('page') page = 1, @Query('limit') limit = 10) {
+    return this.blogsService.findPaginated(Number(page), Number(limit));
+  }
+
+
   @Delete(':code')
   // @Provider()
   deleteOne(@Param('code') code: string) {
@@ -44,4 +52,4 @@ export class BlogsController {
       deleted: true,
     } as UpdateBlogDto);
   }
- }
+}
