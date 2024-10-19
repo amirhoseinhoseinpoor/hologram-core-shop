@@ -18,6 +18,8 @@ import { HonorsModule } from './modules/honors/honors.module';
 import { ExhibitionModule } from './modules/exhibition/exhibition.module';
 import { BlogsModule } from './modules/blogs/blogs.module';
 import { BannerModule } from './modules/banner/banner.module';
+import { HeaderModule } from './modules/header/header.module';
+
 
 @Module({
   imports: [
@@ -49,6 +51,7 @@ import { BannerModule } from './modules/banner/banner.module';
     ExhibitionModule,
     BlogsModule,
     BannerModule,
+    HeaderModule,
   ],
   controllers: [AppController],
   providers: [

@@ -13,7 +13,6 @@ import { Provider } from 'src/core/decorator/provider.decorator';
 import { CreateBannerDto } from './dto/create-banner.dto';
 import { UpdateBannerDto } from './dto/update-banner.dto';
 
-
 @Controller('banner')
 export class BannerController {
     constructor(private readonly bannerService: BannerService) { }
@@ -43,6 +42,5 @@ export class BannerController {
             deleted: true,
         } as UpdateBannerDto);
     }
-
 
 }
