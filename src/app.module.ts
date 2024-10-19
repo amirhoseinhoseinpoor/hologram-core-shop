@@ -17,6 +17,7 @@ import { VideoModule } from './modules/video/video.module';
 import { HonorsModule } from './modules/honors/honors.module';
 import { ExhibitionModule } from './modules/exhibition/exhibition.module';
 import { BlogsModule } from './modules/blogs/blogs.module';
+import { BannerModule } from './modules/banner/banner.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { BlogsModule } from './modules/blogs/blogs.module';
     HonorsModule,
     ExhibitionModule,
     BlogsModule,
+    BannerModule,
   ],
   controllers: [AppController],
   providers: [
