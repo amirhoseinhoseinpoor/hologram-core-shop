@@ -39,6 +39,7 @@ export class BannerService {
             return {
                 code: honor.code,
                 title: honor.title,
+                date: honor.createdAt,
                 src: honor.src,
                 link: honor.link,
             };
