@@ -18,13 +18,13 @@ export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Post()
-  @Provider()
+  // @Provider()
   create(@Body() dto: CreateProductDto) {
     return this.productService.create(dto);
   }
 
   @Patch(':code')
-  @Provider()
+  // @Provider()
   update(@Param('code') code: string, @Body() dto: UpdateProductDto) {
     return this.productService.update(code, dto);
   }
@@ -36,13 +36,13 @@ export class ProductController {
   }
 
   @Get(':code')
-  @Public()
+  // @Public()
   findOne(@Param('code') code: string) {
     return this.productService.findOne(code);
   }
 
   @Delete(':code')
-  @Provider()
+  // @Provider()
   deleteOne(@Param('code') code: string) {
     return this.productService.update(code, {
       deleted: true,
