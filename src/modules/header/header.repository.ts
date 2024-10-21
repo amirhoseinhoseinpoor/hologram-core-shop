@@ -15,13 +15,13 @@ export class HeaderRepository extends BaseRepository {
     return await this.getRepository(Header).save(this.By(header));
   }
 
-//   async findAll(where?: {}) {
-//     return await this.find(Header, { ...where, deleted: false });
-//   }
+  async findAll(where?: {}) {
+    return await this.find(Header, { ...where });
+  }
 
-//   async findOne(where: {}) {
-//     const header = await this.findAll(where);
-//     return header?.length === 1 ? header[0] : null;
-//   }
+  async findOne(where: {}) {
+    const header = await this.findAll(where);
+    return header?.length === 1 ? header[0] : null;
+  }
 
 }
