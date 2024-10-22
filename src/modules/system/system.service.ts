@@ -14,7 +14,7 @@ import { MediaTypeDto } from './dto/media-type.dto';
 
 @Injectable()
 export class SystemService {
-  constructor(private mediaRepo: MediaRepository) {}
+  constructor(private mediaRepo: MediaRepository) { }
 
   async uploadFiles(info: MediaTypeDto, dto: MediaDto[]) {
     const files = [];
@@ -56,22 +56,29 @@ export class SystemService {
     }));
   }
 
-  async getFile(filename: string) {
+  async getFile(filename: string): Promise<StreamableFile | string> {
     const file = await this.mediaRepo.findOne(false, { fileName: filename });
-    if (!file) return [];
+    if (!file) return 'File not found';
+
     try {
-      // return readFileSync(
-      //   join(process.cwd(), process.env.UPLOAD_LOCATION, filename),
-      // );
+
       const filePath = join(
         process.cwd(),
         process.env.UPLOAD_LOCATION,
         filename,
       );
       const fileStream = createReadStream(filePath);
+
+      // Add error handling for the file stream
+      fileStream.on('error', (err) => {
+        console.error('Stream error:', err);
+        fileStream.destroy(); // Ensure the stream is closed on error
+      });
       return new StreamableFile(fileStream);
+
     } catch (e) {
-      return NOT_OK;
+      console.error('Error reading file:', e);
+      return 'Error reading file';
     }
   }
 
@@ -95,6 +102,13 @@ export class SystemService {
         filename,
       );
       const fileStream = createReadStream(filePath);
+
+      // Handle stream errors
+      fileStream.on('error', (err) => {
+        console.error('Stream error:', err);
+        fileStream.destroy(); // Ensure the stream is closed on error
+      });
+
       return new StreamableFile(fileStream);
     } catch (e) {
       console.error('Error reading file:', e);
