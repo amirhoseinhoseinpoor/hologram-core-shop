@@ -18,13 +18,13 @@ export class BannerController {
     constructor(private readonly bannerService: BannerService) { }
 
     @Post()
-    // @Provider()
+    @Provider()
     create(@Body() dto: CreateBannerDto) {
         return this.bannerService.create(dto);
     }
 
     @Patch(':code')
-    // @Provider()
+    @Provider()
     update(@Param('code') code: string, @Body() dto: UpdateBannerDto) {
         return this.bannerService.update(code, dto);
     }
@@ -36,7 +36,7 @@ export class BannerController {
     }
 
     @Delete(':code')
-    // @Provider()
+    @Provider()
     deleteOne(@Param('code') code: string) {
         return this.bannerService.update(code, {
             deleted: true,
