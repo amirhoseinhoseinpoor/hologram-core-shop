@@ -28,8 +28,8 @@ export class Order extends BaseRetailEntity {
   @Column('jsonb', { nullable: false, default: {} })
   docComment: object;
 
-  @Column('jsonb', { nullable: false, default: {} })
-  chat: object;
+  @Column('jsonb', { nullable: false })
+  chat: object[];
 
   @Column('jsonb', { nullable: false, default: {} })
   delivery: object;

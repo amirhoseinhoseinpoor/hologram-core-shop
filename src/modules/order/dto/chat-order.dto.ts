@@ -1,9 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsObject, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsArray } from 'class-validator';
 
 export class ChatOrderDto {
-  @ApiProperty()
-  @IsObject()
-  @IsNotEmpty()
-  chat: object;
+  @ApiProperty({ type: () => [Object] })
+  @IsArray()
+  chat?: object[];
 }

@@ -10,10 +10,14 @@ import { ChatOrderDto } from './dto/chat-order.dto';
 import { DeliveryOrderDto } from './dto/delivery-order.dto';
 import { PaymentOrderDto } from './dto/payment-order.dto';
 import { OtherOrderDto } from './dto/other-order.dto';
+import { ChatGateway } from './chat.gateway';
 
 @Injectable()
 export class OrderService {
-  constructor(private repo: OrderRepository) {}
+  constructor(
+    private repo: OrderRepository,
+    private chatGateway: ChatGateway,
+  ) { }
 
   async create(dto: RequestOrderDto) {
     let code = genUID();
@@ -95,6 +99,15 @@ export class OrderService {
     if (!order) throw new NotFoundException(`Order not found`);
     Object.assign(order, dto);
     await this.repo.createOrUpdate({ ...order } as Order);
+
+    // Check if the update involves the chat
+    if ('chat' in dto) {
+      // Emit event to clients
+      this.chatGateway.sendMessage('chatUpdate', {
+        code: code,
+        chat: dto['chat'],
+      });
+    }
     return OK;
   }
 
