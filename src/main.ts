@@ -7,7 +7,7 @@ async function bootstrap() {
 
   // Enable CORS using NestJS's built-in method
   app.enableCors({
-    origin: ['http://localhost:3000', 'http://176.120.16.221', 'http://176.120.16.221:8080'], // Allow requests from this origin (your Next.js front-end)
+    origin: ['http://localhost:3000','http://localhost:3001', 'http://176.120.16.221', 'http://176.120.16.221:8080'], // Allow requests from this origin (your Next.js front-end)
     methods: 'GET,POST,PUT,PATCH,DELETE', // Allowed methods
     allowedHeaders: 'X-Requested-With,Content-Type,Authorization,mode', // Allowed headers
     credentials: true, // Allow cookies and authorization headers
