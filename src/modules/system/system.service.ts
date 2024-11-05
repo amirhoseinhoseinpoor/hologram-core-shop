@@ -14,7 +14,7 @@ import { MediaTypeDto } from './dto/media-type.dto';
 
 @Injectable()
 export class SystemService {
-  constructor(private mediaRepo: MediaRepository) { }
+  constructor(private mediaRepo: MediaRepository) {}
 
   async uploadFiles(info: MediaTypeDto, dto: MediaDto[]) {
     const files = [];
@@ -61,7 +61,6 @@ export class SystemService {
     if (!file) return 'File not found';
 
     try {
-
       const filePath = join(
         process.cwd(),
         process.env.UPLOAD_LOCATION,
@@ -75,7 +74,6 @@ export class SystemService {
         fileStream.destroy(); // Ensure the stream is closed on error
       });
       return new StreamableFile(fileStream);
-
     } catch (e) {
       console.error('Error reading file:', e);
       return 'Error reading file';

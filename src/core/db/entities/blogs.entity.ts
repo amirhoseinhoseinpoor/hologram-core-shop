@@ -14,5 +14,4 @@ export class Blogs extends BaseRetailEntity {
 
   @Column('jsonb', { nullable: false })
   content: object[];
-
 }

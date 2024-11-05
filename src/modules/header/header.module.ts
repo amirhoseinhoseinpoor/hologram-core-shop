@@ -5,6 +5,6 @@ import { HeaderRepository } from './header.repository';
 
 @Module({
   controllers: [HeaderController],
-  providers: [HeaderService , HeaderRepository]
+  providers: [HeaderService, HeaderRepository],
 })
 export class HeaderModule {}

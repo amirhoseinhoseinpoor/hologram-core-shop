@@ -4,7 +4,7 @@ import { BannerService } from './banner.service';
 import { BannerRepository } from './banner.repository';
 
 @Module({
-    controllers: [BannerController],
-    providers: [BannerService, BannerRepository],
+  controllers: [BannerController],
+  providers: [BannerService, BannerRepository],
 })
-export class BannerModule { }
+export class BannerModule {}

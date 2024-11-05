@@ -7,7 +7,7 @@ import { UpdateBlogDto } from './dto/update-blog.dto';
 
 @Injectable()
 export class BlogsService {
-  constructor(private repo: BlogsRepository) { }
+  constructor(private repo: BlogsRepository) {}
 
   async create(dto: CreateBlogDto) {
     let code = genUID();
@@ -43,16 +43,16 @@ export class BlogsService {
   }
 
   async findPaginated(page: number, limit: number) {
-    const skip = (page - 1) * limit;  // Calculate how many records to skip
-  
+    const skip = (page - 1) * limit; // Calculate how many records to skip
+
     // Fetch the data with pagination and total count
     const [blogs, total] = await this.repo.findAndCount({
-      where: { deleted: false },  // Add any additional conditions here
-      order: { createdAt: 'DESC' },  // Order by the most recent blogs
-      skip: skip,  // How many records to skip
-      take: limit,  // How many records to take (limit)
+      where: { deleted: false }, // Add any additional conditions here
+      order: { createdAt: 'DESC' }, // Order by the most recent blogs
+      skip: skip, // How many records to skip
+      take: limit, // How many records to take (limit)
     });
-  
+
     // Return the paginated results and meta information
     return {
       data: blogs,

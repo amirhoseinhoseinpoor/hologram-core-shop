@@ -17,7 +17,7 @@ export class OrderService {
   constructor(
     private repo: OrderRepository,
     private chatGateway: ChatGateway,
-  ) { }
+  ) {}
 
   async create(dto: RequestOrderDto) {
     let code = genUID();
@@ -49,8 +49,7 @@ export class OrderService {
     if (!orders || orders.length === 0) {
       throw new NotFoundException(`Order not found`);
     }
-    console.log(orders);
-    
+
     return orders.map((order) => ({
       code: order.code,
       status: order.status,
@@ -63,7 +62,6 @@ export class OrderService {
       delivery: order.delivery,
       payment: order.payment,
       createdAt: order.createdAt,
-      prodName: order.prodName,
     }));
   }
 

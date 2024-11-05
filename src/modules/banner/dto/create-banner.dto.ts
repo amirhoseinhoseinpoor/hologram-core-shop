@@ -16,5 +16,4 @@ export class CreateBannerDto {
   @IsNotEmpty()
   @IsString()
   link: String;
-
 }

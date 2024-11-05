@@ -27,16 +27,17 @@ export class UsersController {
     return this.userService.update(code, dto);
   }
 
-
   @Post()
-  @UsePipes(new ValidationPipe({
-    whitelist: true,
-    forbidNonWhitelisted: true,
-  }))
+  @UsePipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  )
   find(@Body() dto: FindUserDto) {
-    // if (!dto.id && !dto.code && !dto.nId && !dto.username && !dto.email) {  
-    //   throw new BadRequestException('At least one field must be provided in the DTO.');  
-    // }  
+    // if (!dto.id && !dto.code && !dto.nId && !dto.username && !dto.email) {
+    //   throw new BadRequestException('At least one field must be provided in the DTO.');
+    // }
     return this.userService.findBy(dto);
   }
 

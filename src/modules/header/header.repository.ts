@@ -1,9 +1,9 @@
-import { Inject , Injectable , Scope } from "@nestjs/common";
+import { Inject, Injectable, Scope } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
-import { Request } from "express";
-import { BaseRepository } from "src/core/db/base.repository";
-import { DataSource } from "typeorm";
-import { Header } from "src/core/db/entities/header.entity";
+import { Request } from 'express';
+import { BaseRepository } from 'src/core/db/base.repository';
+import { DataSource } from 'typeorm';
+import { Header } from 'src/core/db/entities/header.entity';
 
 @Injectable({ scope: Scope.REQUEST })
 export class HeaderRepository extends BaseRepository {
@@ -23,5 +23,4 @@ export class HeaderRepository extends BaseRepository {
     const header = await this.findAll(where);
     return header?.length === 1 ? header[0] : null;
   }
-
 }

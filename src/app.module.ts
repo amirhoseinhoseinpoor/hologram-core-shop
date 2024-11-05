@@ -20,7 +20,6 @@ import { BlogsModule } from './modules/blogs/blogs.module';
 import { BannerModule } from './modules/banner/banner.module';
 import { HeaderModule } from './modules/header/header.module';
 
-
 @Module({
   imports: [
     AuthModule,

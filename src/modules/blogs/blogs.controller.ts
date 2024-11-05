@@ -15,10 +15,9 @@ import { UpdateBlogDto } from './dto/update-blog.dto';
 import { Public } from 'src/core/decorator/public.decorator';
 import { Provider } from 'src/core/decorator/provider.decorator';
 
-
 @Controller('blogs')
 export class BlogsController {
-  constructor(private readonly blogsService: BlogsService) { }
+  constructor(private readonly blogsService: BlogsService) {}
 
   @Post()
   // @Provider()
@@ -43,7 +42,6 @@ export class BlogsController {
   async findAllPaginated(@Query('page') page = 1, @Query('limit') limit = 10) {
     return this.blogsService.findPaginated(Number(page), Number(limit));
   }
-
 
   @Delete(':code')
   // @Provider()
