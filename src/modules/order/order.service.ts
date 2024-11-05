@@ -49,6 +49,8 @@ export class OrderService {
     if (!orders || orders.length === 0) {
       throw new NotFoundException(`Order not found`);
     }
+    console.log(orders);
+    
     return orders.map((order) => ({
       code: order.code,
       status: order.status,
@@ -60,6 +62,8 @@ export class OrderService {
       chat: order.chat,
       delivery: order.delivery,
       payment: order.payment,
+      createdAt: order.createdAt,
+      prodName: order.prodName,
     }));
   }
 

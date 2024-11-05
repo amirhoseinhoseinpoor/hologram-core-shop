@@ -6,6 +6,9 @@ export class Order extends BaseRetailEntity {
   @Column({ type: 'varchar', length: 15, nullable: false, unique: true })
   code: string;
 
+  @Column({ type: 'varchar', length: 45, nullable: true , default: null})
+  prodName: string;
+
   //1:Registering, 2:confirmed, 3:PayOff, 4:Preparing, 5:Sending, 6:Delivered, 7.Suspend
   @Column({ type: 'smallint', default: 1, nullable: false, unique: false })
   status: number = 1;
