@@ -98,6 +98,13 @@ export class OrderController {
     return this.orderService.findById();
   }
 
+  @Delete('deleteById/:code')
+  DeleteById(@Param('code') code: string) {
+    return this.orderService.update(code , {
+      deleted: true,
+    } as OtherOrderDto)
+  }
+
   @Delete(':code')
   @Provider()
   deleteOne(@Param('code') code: string) {

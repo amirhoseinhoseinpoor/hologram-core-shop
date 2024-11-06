@@ -17,7 +17,7 @@ export class OrderService {
   constructor(
     private repo: OrderRepository,
     private chatGateway: ChatGateway,
-  ) {}
+  ) { }
 
   async create(dto: RequestOrderDto) {
     let code = genUID();
@@ -63,6 +63,20 @@ export class OrderService {
       payment: order.payment,
       createdAt: order.createdAt,
     }));
+  }
+
+  async deleteById(code: string, dto: OtherOrderDto) {
+    const orders = await this.repo.findById();
+    if (!orders || orders.length === 0) {
+      throw new NotFoundException(`Order not found`);
+    }
+
+    const exactOrder = orders.find(order => {
+      order.code == code
+    });
+
+    Object.assign(exactOrder, dto);
+    await this.repo.createOrUpdate({ ...exactOrder } as Order);
   }
 
   async findAll() {
