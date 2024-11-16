@@ -100,9 +100,9 @@ export class OrderController {
 
   @Delete('deleteById/:code')
   DeleteById(@Param('code') code: string) {
-    return this.orderService.update(code , {
+    return this.orderService.update(code, {
       deleted: true,
-    } as OtherOrderDto)
+    } as OtherOrderDto);
   }
 
   @Delete(':code')
