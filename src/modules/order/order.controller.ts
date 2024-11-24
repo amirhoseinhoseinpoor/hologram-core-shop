@@ -41,7 +41,7 @@ export class OrderController {
     return this.orderService.update(code, dto);
   }
 
-  @Patch('document/:code/comment')
+  @Patch('chatImage/:code')
   // @Provider()
   UpdateDocumentComment(
     @Param('code') code: string,

@@ -26,9 +26,9 @@ export class Order extends BaseRetailEntity {
   document: object;
 
   @Column('jsonb', { nullable: false, default: {} })
-  docComment: object;
+  chatImage: object;
 
-  @Column('jsonb', { nullable: false , default: {} })
+  @Column('jsonb', { nullable: false , default: [] })
   chat: object[];
 
   @Column('jsonb', { nullable: false, default: {} })

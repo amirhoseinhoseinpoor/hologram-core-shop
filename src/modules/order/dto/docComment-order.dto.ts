@@ -5,5 +5,5 @@ export class DocCommentOrderDto {
   @ApiProperty()
   @IsObject()
   @IsNotEmpty()
-  docComment: object;
+  chatImage: object;
 }
