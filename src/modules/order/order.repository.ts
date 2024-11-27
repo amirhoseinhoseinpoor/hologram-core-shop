@@ -20,9 +20,33 @@ export class OrderRepository extends BaseRepository {
     return await this.getRepository(Order).save(this.By(order));
   }
 
-  async findAll(where?: {}) {
-    return await this.find(Order, { ...where, deleted: false });
+  // Find all orders with filters using the query builder
+  async findAll(filters: any) {
+    const { status } = filters;
+  
+    // Create the query builder using the repository
+    const queryBuilder = this.getRepository(Order)
+      .createQueryBuilder('order'); // Use the repository's query builder with alias 'order'
+  
+    // Apply filters if they are present
+    if (status !== undefined) {
+      queryBuilder.andWhere('"order"."status" = :status', { status });
+    }
+  
+    // if (reqComment) {
+    //   queryBuilder.andWhere('"order"."reqComment" LIKE :reqComment', { reqComment: `%${reqComment}%` });
+    // }
+  
+    // if (hasNewMessage !== undefined) {
+    //   // Assuming 'chat' is a JSONB column, checking for last message with `isAdmin: false`
+    //   queryBuilder.andWhere('"order"."chat"->>\'isAdmin\' = :isAdmin', { isAdmin: 'false' });
+    // }
+  
+    // Execute the query and return the result
+    return await queryBuilder.getMany();
   }
+  
+
 
   async findOne(where: {}) {
     let orders = await this.findAll(where);

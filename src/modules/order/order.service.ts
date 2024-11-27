@@ -79,8 +79,10 @@ export class OrderService {
     await this.repo.createOrUpdate({ ...exactOrder } as Order);
   }
 
-  async findAll() {
-    const orders = await this.repo.findAll();
+  async findAll(filters: {
+    status?: number;
+  }) {
+    const orders = await this.repo.findAll(filters);
     if (!orders?.length) return [];
     return orders.map((order) => {
       return {

@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { Provider } from 'src/core/decorator/provider.decorator';
@@ -20,7 +21,7 @@ import { OtherOrderDto } from './dto/other-order.dto';
 
 @Controller('order')
 export class OrderController {
-  constructor(private readonly orderService: OrderService) {}
+  constructor(private readonly orderService: OrderService) { }
 
   @Post('request')
   createRequest(@Body() dto: RequestOrderDto) {
@@ -28,7 +29,7 @@ export class OrderController {
   }
 
   @Patch('request/:code/comment')
-  // @Provider()
+  @Provider()
   UpdateRequestComment(
     @Param('code') code: string,
     @Body() dto: ReqCommentOrderDto,
@@ -42,7 +43,7 @@ export class OrderController {
   }
 
   @Patch('chatImage/:code')
-  // @Provider()
+  @Provider()
   UpdateDocumentComment(
     @Param('code') code: string,
     @Body() dto: DocCommentOrderDto,
@@ -66,7 +67,7 @@ export class OrderController {
   }
 
   @Patch('status/:code/:status')
-  // @Provider()
+  @Provider()
   UpdateStatus(@Param('code') code: string, @Param('status') status: string) {
     return this.orderService.update(code, {
       status: +status,
@@ -75,8 +76,11 @@ export class OrderController {
   }
 
   @Get('list')
-  findAll() {
-    return this.orderService.findAll();
+  @Provider()
+  findAll(
+    @Query('status') status: number,
+  ) {
+    return this.orderService.findAll({ status });
   }
 
   @Get('find/:code')
