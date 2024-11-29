@@ -82,7 +82,7 @@ export class OrderService {
   async findAll(filters: {
     status?: number;
   }) {
-    const orders = await this.repo.findAll(filters);
+    const orders = await this.repo.findAllQuery(filters);
     if (!orders?.length) return [];
     return orders.map((order) => {
       return {
