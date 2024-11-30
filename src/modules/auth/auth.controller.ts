@@ -4,6 +4,7 @@ import { CreateUserDto } from '../users/dto/create-user.dto';
 import { TransactionInterceptor } from 'src/core/db/transaction.interceptor';
 import { SignInDto } from './dto/signIn.dto';
 import { Public } from 'src/core/decorator/public.decorator';
+import { Provider } from 'src/core/decorator/provider.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -19,6 +20,22 @@ export class AuthController {
   @Public()
   @Post('login')
   signIn(@Body() signInDto: SignInDto) {
-    return this.authService.signIn(signInDto.username, signInDto.password);
+    return this.authService.signIn(
+      signInDto.username,
+      signInDto.password,
+      signInDto.captchaResponse,
+      false
+    );
+  }
+
+  @Public()
+  @Post('adminLogin')
+  async adminSignIn(@Body() signInDto: SignInDto) {
+    return this.authService.signIn(
+      signInDto.username,
+      signInDto.password,
+      signInDto.captchaResponse,
+      true,
+    );
   }
 }
