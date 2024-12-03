@@ -9,6 +9,7 @@ import {
   UsePipes,
   ValidationPipe,
   BadRequestException,
+  Get,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -19,7 +20,7 @@ import { Admin } from 'src/core/decorator/admin.decorator';
 
 @Controller('users')
 export class UsersController {
-  constructor(private userService: UsersService) {}
+  constructor(private userService: UsersService) { }
 
   @UseInterceptors(TransactionInterceptor)
   @Patch(':code')
@@ -35,9 +36,15 @@ export class UsersController {
     }),
   )
   find(@Body() dto: FindUserDto) {
-    // if (!dto.id && !dto.code && !dto.nId && !dto.username && !dto.email) {
-    //   throw new BadRequestException('At least one field must be provided in the DTO.');
-    // }
+    if (!dto.id && !dto.code && !dto.nId && !dto.username && !dto.email) {
+      throw new BadRequestException('At least one field must be provided in the DTO.');
+    }
+    return this.userService.findBy(dto);
+  }
+
+  @Get('allUser')
+  @Provider()
+  findAll(@Body() dto: FindUserDto) {
     return this.userService.findBy(dto);
   }
 

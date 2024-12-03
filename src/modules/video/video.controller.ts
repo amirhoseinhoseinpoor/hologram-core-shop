@@ -18,13 +18,13 @@ export class VideoController {
   constructor(private readonly videoService: VideoService) {}
 
   @Post()
-  // @Provider()
+  @Provider()
   create(@Body() dto: CreateVideoDto) {
     return this.videoService.create(dto);
   }
 
   @Patch(':code')
-  // @Provider()
+  @Provider()
   update(@Param('code') code: string, @Body() dto: UpdateVideoDto) {
     return this.videoService.update(code, dto);
   }
@@ -36,7 +36,7 @@ export class VideoController {
   }
 
   @Delete(':code')
-  // @Provider()
+  @Provider()
   deleteOne(@Param('code') code: string) {
     return this.videoService.update(code, {
       deleted: true,

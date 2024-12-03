@@ -1,15 +1,37 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { CreateUserDto } from './create-user.dto';
-import { IsBoolean, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsBoolean, IsOptional } from 'class-validator';
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsBoolean()
-  @IsOptional()
-  active: boolean;
 
-  @ApiProperty()
-  @IsNotEmpty()
-  code: string;
+  @ApiProperty()  
+  @IsOptional()  
+  code?: string;  
+
+  @ApiProperty()  
+  @IsOptional()  
+  firstName?: string;  
+
+  @ApiProperty()  
+  @IsOptional()  
+  lastName?: string;  
+
+  @ApiProperty()  
+  @IsOptional()  
+  username?: string;  
+
+  @ApiProperty()  
+  @IsBoolean()  
+  @IsOptional()  
+  active?: boolean; 
+
+  @ApiProperty()  
+  @IsBoolean()  
+  @IsOptional()  
+  domain?: number; 
+
+  @ApiProperty({ type: [Number], required: false }) 
+  @IsOptional()  
+  roleIds?: number[];
+
 }
