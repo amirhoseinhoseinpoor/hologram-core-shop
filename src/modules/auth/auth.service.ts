@@ -69,9 +69,17 @@ export class AuthService {
     return response.data.success;
   }
 
-  async signUp(dto: CreateUserDto): Promise<any> {
-    const user = await this.userService.findOneByUsername(dto.username);
-    if (user) throw new BadRequestException('Invalid Username');
-    return await this.userService.create(dto);
+  async signUp(dto: CreateUserDto, domain: number, roleIds: number[]): Promise<any> {
+    const existingUser = await this.userService.findOneByUsername(dto.username);
+    if (existingUser) throw new BadRequestException('Username already exists');
+
+    // Assign domain and role to the user DTO
+    const newUserDto = {
+      ...dto,
+      domain,
+      roleIds,
+    };
+
+    return await this.userService.create(newUserDto);
   }
 }
