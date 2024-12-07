@@ -4,7 +4,6 @@ import { CreateUserDto } from '../users/dto/create-user.dto';
 import { TransactionInterceptor } from 'src/core/db/transaction.interceptor';
 import { SignInDto } from './dto/signIn.dto';
 import { Public } from 'src/core/decorator/public.decorator';
-import { Provider } from 'src/core/decorator/provider.decorator';
 
 @Controller('auth')
 export class AuthController {
