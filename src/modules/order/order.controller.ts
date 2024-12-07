@@ -29,7 +29,7 @@ export class OrderController {
   }
 
   @Patch('request/:code/comment')
-  // @Provider()
+  @Provider()
   UpdateRequestComment(
     @Param('code') code: string,
     @Body() dto: ReqCommentOrderDto,
@@ -43,7 +43,7 @@ export class OrderController {
   }
 
   @Patch('chatImage/:code')
-  // @Provider()
+  @Provider()
   UpdateDocumentComment(
     @Param('code') code: string,
     @Body() dto: DocCommentOrderDto,
@@ -62,6 +62,7 @@ export class OrderController {
   }
 
   @Patch('payment/:code')
+  @Provider()
   UpdatePayment(@Param('code') code: string, @Body() dto: PaymentOrderDto) {
     return this.orderService.update(code, dto);
   }

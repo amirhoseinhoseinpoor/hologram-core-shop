@@ -13,7 +13,7 @@ export class UsersService {
   constructor(
     private repo: UsersRepository,
     private userRoleService: UserRolesService,
-  ) {}
+  ) { }
 
   async asUser(dto: CreateUserDto | UpdateUserDto): Promise<User> {
     const user: User = new User();
@@ -38,8 +38,16 @@ export class UsersService {
 
   async update(code: string, dto: UpdateUserDto) {
     const curUser = await this.repo.findOne({ code: code });
-    if (!curUser) throw new BadRequestException('User does not found');
-    Object.assign(curUser, { ...this.asUser(dto), id: curUser.id });
+    if (!curUser) throw new BadRequestException('User not found');
+
+    // Update fields based on the dto  
+    if (dto.firstName) curUser.firstName = dto.firstName;
+    if (dto.lastName) curUser.lastName = dto.lastName;
+    if (dto.username) curUser.username = dto.username;
+    if (dto.domain) curUser.domain = dto.domain;
+    if (typeof dto.active !== 'undefined') curUser.active = dto.active; // Check for update on active status  
+
+    // Checking for roleIds to update roles if provided  
     if (Array.isArray(dto.roleIds)) {
       await this.userRoleService.exists(dto.roleIds);
       curUser.userRoles = await this.userRoleService.update(
@@ -48,6 +56,8 @@ export class UsersService {
         dto.roleIds,
       );
     }
+
+    // Update the user in the repository  
     await this.repo.createOrUpdate(curUser);
     return OK;
   }

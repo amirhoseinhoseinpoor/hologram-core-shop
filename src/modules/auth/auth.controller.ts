@@ -4,6 +4,8 @@ import { CreateUserDto } from '../users/dto/create-user.dto';
 import { TransactionInterceptor } from 'src/core/db/transaction.interceptor';
 import { SignInDto } from './dto/signIn.dto';
 import { Public } from 'src/core/decorator/public.decorator';
+import { BadRequestException } from '@nestjs/common';
+import { Provider } from 'src/core/decorator/provider.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -13,7 +15,7 @@ export class AuthController {
   @UseInterceptors(TransactionInterceptor)
   @Post('register')
   async signUp(@Body() dto: CreateUserDto) {
-    return await this.authService.signUp(dto);
+    return await this.authService.signUp(dto, 1, [3]); // domain=1, role=3
   }
 
   @Public()
@@ -36,5 +38,15 @@ export class AuthController {
       signInDto.captchaResponse,
       true,
     );
+  }
+
+  @Provider()
+  @UseInterceptors(TransactionInterceptor)
+  @Post('createUserByAdmin')
+  async createUserByAdmin(@Body() dto: CreateUserDto) {
+    if (!dto.domain || !dto.roleIds || dto.roleIds.length === 0) {
+      throw new BadRequestException('Domain and roleIds are required for admin user creation.');
+    }
+    return await this.authService.signUp(dto, dto.domain, dto.roleIds); 
   }
 }
