@@ -8,6 +8,6 @@ export class UserRole extends BaseRetailEntity {
   @ManyToOne(() => User, (u) => u.userRoles, { nullable: true })
   user?: User;
 
-  @ManyToOne(() => Role, (r) => r.userRoles, { nullable: true, eager: true })
+  @ManyToOne(() => Role, (r) => r.userRoles, { nullable: true })
   role?: Role;
 }

@@ -66,10 +66,19 @@ export class UsersService {
     return await this.repo.findOne({ username: username });
   }
 
-  async findBy(dto: FindUserDto) {
-    return await this.repo.findAll({ ...dto });
-  }
+  async findBy(dto: FindUserDto): Promise<User[]> {
+    const { page, limit, sortBy, sortOrder, ...filters } = dto;
 
+    // Remove undefined or null properties
+    const cleanFilters: Partial<User> = {};
+    Object.keys(filters).forEach((key) => {
+      if (filters[key] !== undefined && filters[key] !== null) {
+        cleanFilters[key] = filters[key];
+      }
+    });
+
+    return await this.repo.findAll(cleanFilters, ['userRoles', 'userRoles.role'], page, limit, sortBy, sortOrder);
+  }
   async remove(code: string) {
     const curUser = await this.repo.findOne({ code: code });
     if (!curUser) throw new BadRequestException('User does not found');

@@ -1,39 +1,61 @@
-import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsEmail,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
+// dto/find-user.dto.ts
+import { 
+  IsOptional, 
+  IsNumber, 
+  IsIn, 
+  IsBoolean, 
+  IsString, 
+  Min, 
+  IsEnum 
 } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class FindUserDto {
-  @ApiProperty()
+  @IsOptional()
+  id?: number;
+
+  @IsOptional()
+  code?: string;
+
+  @IsOptional()
+  nId?: string;
+
+  @IsOptional()
+  @IsString()
+  username?: string;
+
+  @IsOptional()
+  @IsString()
+  email?: string;
+
+  @IsOptional()
+  @Type(() => Number) // Ensure domain is transformed to a number
+  @IsNumber({}, { message: 'domain must be a number conforming to the specified constraints' })
+  @IsIn([1, 2], { message: 'Domain must be either 1 or 2' })
+  domain?: number;
+
+  @IsOptional()
+  @IsBoolean()
+  active?: boolean;
+
+  // Optional: Pagination and Sorting
+  @IsOptional()
+  @Type(() => Number)
   @IsNumber()
-  @IsOptional()
-  @IsNotEmpty()
-  id: number;
+  @Min(1)
+  page?: number = 1;
 
-  @ApiProperty()
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(1)
+  limit?: number = 10;
+
+  @IsOptional()
   @IsString()
-  @IsOptional()
-  @IsNotEmpty()
-  code: string;
+  sortBy?: string = 'id';
 
-  @ApiProperty()
-  @IsString()
   @IsOptional()
-  @IsNotEmpty()
-  nId: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsOptional()
-  username: string;
-
-  @ApiProperty()
-  @IsEmail()
-  @IsOptional()
-  @IsNotEmpty()
-  email: string;
+  @IsEnum(['ASC', 'DESC'], { message: 'Sort order must be ASC or DESC' })
+  sortOrder?: 'ASC' | 'DESC' = 'ASC';
 }
