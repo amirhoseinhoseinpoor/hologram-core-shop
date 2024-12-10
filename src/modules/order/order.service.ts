@@ -10,7 +10,7 @@ import { ChatOrderDto } from './dto/chat-order.dto';
 import { DeliveryOrderDto } from './dto/delivery-order.dto';
 import { PaymentOrderDto } from './dto/payment-order.dto';
 import { OtherOrderDto } from './dto/other-order.dto';
-import { ChatGateway } from './chat.gateway';
+import { ChatGateway } from '../gateways/chat.gateway';
 
 @Injectable()
 export class OrderService {
