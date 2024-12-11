@@ -20,6 +20,7 @@ import { BlogsModule } from './modules/blogs/blogs.module';
 import { BannerModule } from './modules/banner/banner.module';
 import { HeaderModule } from './modules/header/header.module';
 import { GateWaysModule } from './modules/gateways/gateways.module';
+import { AnalyticsModule } from './modules/analytics/analytics.module';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { GateWaysModule } from './modules/gateways/gateways.module';
     BannerModule,
     HeaderModule,
     GateWaysModule,
+    AnalyticsModule,
   ],
   controllers: [AppController],
   providers: [

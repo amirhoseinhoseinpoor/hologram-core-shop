@@ -8,10 +8,12 @@ import {
   SubscribeMessage,
   MessageBody,
   ConnectedSocket,
+  
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UseGuards } from '@nestjs/common';
 import { ActiveUsersService } from './active-users.service';
+import { WsAuthGuard } from '../auth/wsAuth.guard';
 
 @Injectable()
 @WebSocketGateway({
@@ -21,6 +23,7 @@ import { ActiveUsersService } from './active-users.service';
     methods: ['GET', 'POST'],
   },
 })
+@UseGuards(WsAuthGuard) 
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
