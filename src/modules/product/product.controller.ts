@@ -35,6 +35,12 @@ export class ProductController {
     return this.productService.findAll();
   }
 
+  @Get('count')
+  @Public()
+  countNonDeleted() {
+    return this.productService.countNonDeletedProducts();
+  }
+
   @Get(':code')
   @Public()
   findOne(@Param('code') code: string) {

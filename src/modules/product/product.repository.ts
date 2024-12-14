@@ -23,4 +23,10 @@ export class ProductRepository extends BaseRepository {
     const products = await this.findAll(where);
     return products?.length === 1 ? products[0] : null;
   }
+
+  async countNonDeleted() {
+    return await this.getRepository(Product).count({
+      where: { deleted: false },
+    });
+  }
 }
