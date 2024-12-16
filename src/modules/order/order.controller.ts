@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { Provider } from 'src/core/decorator/provider.decorator';
+import { Public } from 'src/core/decorator/public.decorator';
 import { RequestOrderDto } from './dto/request-order.dto';
 import { ReqCommentOrderDto } from './dto/reqComment-order-dto';
 import { DocumentOrderDto } from './dto/document-order-dto';
@@ -18,6 +19,8 @@ import { ChatOrderDto } from './dto/chat-order.dto';
 import { DeliveryOrderDto } from './dto/delivery-order.dto';
 import { PaymentOrderDto } from './dto/payment-order.dto';
 import { OtherOrderDto } from './dto/other-order.dto';
+import { CountOrderDto } from './dto/count-order.dto';
+
 
 @Controller('order')
 export class OrderController {
@@ -74,6 +77,14 @@ export class OrderController {
       status: +status,
       deleted: false,
     } as OtherOrderDto);
+  }
+
+  @Get('count')
+  @Public()
+  countOrders(
+    @Query('status') status?: number,
+  ): Promise<CountOrderDto> {
+    return this.orderService.countOrders({ status });
   }
 
   @Get('list')

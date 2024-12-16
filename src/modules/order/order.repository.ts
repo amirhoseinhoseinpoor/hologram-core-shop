@@ -20,30 +20,31 @@ export class OrderRepository extends BaseRepository {
     return await this.getRepository(Order).save(this.By(order));
   }
 
-  // Find all orders with filters using the query builder
+  
   async findAllQuery(filters: any) {
     const { status } = filters;
 
-    // Create the query builder using the repository
-    const queryBuilder = this.getRepository(Order)
-      .createQueryBuilder('order'); // Use the repository's query builder with alias 'order'
+    const queryBuilder = this.getRepository(Order).createQueryBuilder('order');
 
-    // Apply filters if they are present
+    if (status !== undefined) {
+      queryBuilder.andWhere('"order"."status" = :status', { status });
+    }
+    return await queryBuilder.getMany();
+  }
+
+  async countOrder(filters: any): Promise<number> {
+    const { status } = filters;
+
+    const queryBuilder = this.getRepository(Order).createQueryBuilder('order');
+
     if (status !== undefined) {
       queryBuilder.andWhere('"order"."status" = :status', { status });
     }
 
-    // if (reqComment) {
-    //   queryBuilder.andWhere('"order"."reqComment" LIKE :reqComment', { reqComment: `%${reqComment}%` });
-    // }
+    // اضافه کردن شرط deleted = false
+    queryBuilder.andWhere('"order"."deleted" = :deleted', { deleted: false });
 
-    // if (hasNewMessage !== undefined) {
-    //   // Assuming 'chat' is a JSONB column, checking for last message with `isAdmin: false`
-    //   queryBuilder.andWhere('"order"."chat"->>\'isAdmin\' = :isAdmin', { isAdmin: 'false' });
-    // }
-
-    // Execute the query and return the result
-    return await queryBuilder.getMany();
+    return await queryBuilder.getCount();
   }
 
   async findAll(where?: {}) {

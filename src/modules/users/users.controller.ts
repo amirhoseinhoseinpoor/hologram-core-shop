@@ -15,6 +15,7 @@ import {
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FindUserDto } from './dto/find-user.dto';
+import { UpdateUserSiteDto } from './dto/update-userSite.dto';
 import { TransactionInterceptor } from 'src/core/db/transaction.interceptor';
 import { Provider } from 'src/core/decorator/provider.decorator';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
@@ -25,13 +26,27 @@ export class UsersController {
   constructor(private userService: UsersService) {}
 
   @UseInterceptors(TransactionInterceptor)
+  @Patch('editUserSite/:code')
+  @ApiOperation({ summary: 'Update a user by code' })
+  @ApiResponse({ status: 200, description: 'User updated successfully.' })
+  @ApiResponse({ status: 400, description: 'Invalid input or user not found.' })
+  updateSite(@Param('code') code: string, @Body() dto: UpdateUserSiteDto) {
+    return this.userService.update(code, dto);
+  }
+
+  @UseInterceptors(TransactionInterceptor)
   @Patch(':code')
+  @Provider()
   @ApiOperation({ summary: 'Update a user by code' })
   @ApiResponse({ status: 200, description: 'User updated successfully.' })
   @ApiResponse({ status: 400, description: 'Invalid input or user not found.' })
   update(@Param('code') code: string, @Body() dto: UpdateUserDto) {
     return this.userService.update(code, dto);
   }
+
+  
+
+
 
   @Post()
   @UsePipes(

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException , InternalServerErrorException } from '@nestjs/common';
 import { Order } from 'src/core/db/entities/order.entity';
 import { OrderRepository } from './order.repository';
 import { OK, genUID } from 'src/core/misc/consts';
@@ -11,6 +11,8 @@ import { DeliveryOrderDto } from './dto/delivery-order.dto';
 import { PaymentOrderDto } from './dto/payment-order.dto';
 import { OtherOrderDto } from './dto/other-order.dto';
 import { ChatGateway } from '../gateways/chat.gateway';
+import { CountOrderDto } from './dto/count-order.dto';
+
 
 @Injectable()
 export class OrderService {
@@ -75,6 +77,10 @@ export class OrderService {
       order.code == code
     });
 
+    if (!exactOrder) {
+      throw new NotFoundException(`Order with code ${code} not found`);
+    }
+
     Object.assign(exactOrder, dto);
     await this.repo.createOrUpdate({ ...exactOrder } as Order);
   }
@@ -135,5 +141,17 @@ export class OrderService {
     // Object.assign(order, dto);
     await this.repo.createOrUpdate({ ...order } as Order);
     return OK;
+  }
+
+  async countOrders(filters: {
+    status?: number;
+  }): Promise<CountOrderDto> {
+    try {
+      const count = await this.repo.countOrder(filters);
+      return { count };
+    } catch (error) {
+      console.error('Error counting orders:', error);
+      throw new InternalServerErrorException('Failed to count orders');
+    }
   }
 }

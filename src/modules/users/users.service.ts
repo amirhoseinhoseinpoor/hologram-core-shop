@@ -44,6 +44,8 @@ export class UsersService {
     if (dto.firstName) curUser.firstName = dto.firstName;
     if (dto.lastName) curUser.lastName = dto.lastName;
     if (dto.username) curUser.username = dto.username;
+    if (dto.email) curUser.email = dto.email;
+    if (dto.gender) curUser.gender = dto.gender;
     if (dto.domain) curUser.domain = dto.domain;
     if (typeof dto.active !== 'undefined') curUser.active = dto.active; // Check for update on active status  
 
