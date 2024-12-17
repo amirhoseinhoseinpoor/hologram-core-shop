@@ -1,6 +1,9 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { UserRole } from './user-roles.entity';
 import { BaseRetailEntity } from './base-retail.entity';
+import { ManyToMany } from 'typeorm';
+import { Product } from './product.entity';
+import { JoinTable } from 'typeorm';
 
 @Entity('Users')
 export class User extends BaseRetailEntity {
@@ -44,4 +47,8 @@ export class User extends BaseRetailEntity {
 
   @OneToMany(() => UserRole, (ur) => ur.user)
   userRoles?: UserRole[];
+
+  @ManyToMany(() => Product, product => product.savedBy)
+  @JoinTable()
+  savedProducts: Product[];
 }
