@@ -7,6 +7,6 @@ export class Role extends BaseRetailEntity {
   @Column({ type: 'varchar', length: 30, nullable: false, unique: true })
   name: string;
 
-  @OneToMany(() => UserRole, (ur) => ur.role, { nullable: true })
+  @OneToMany(() => UserRole, (ur) => ur.role)
   userRoles?: UserRole[];
 }

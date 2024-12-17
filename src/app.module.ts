@@ -19,6 +19,8 @@ import { ExhibitionModule } from './modules/exhibition/exhibition.module';
 import { BlogsModule } from './modules/blogs/blogs.module';
 import { BannerModule } from './modules/banner/banner.module';
 import { HeaderModule } from './modules/header/header.module';
+import { GateWaysModule } from './modules/gateways/gateways.module';
+import { AnalyticsModule } from './modules/analytics/analytics.module';
 
 @Module({
   imports: [
@@ -51,6 +53,8 @@ import { HeaderModule } from './modules/header/header.module';
     BlogsModule,
     BannerModule,
     HeaderModule,
+    GateWaysModule,
+    AnalyticsModule,
   ],
   controllers: [AppController],
   providers: [

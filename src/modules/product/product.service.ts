@@ -51,4 +51,8 @@ export class ProductService {
     await this.repo.createOrUpdate({ ...product, code: code } as Product);
     return OK;
   }
+
+  async countNonDeletedProducts() {
+    return await this.repo.countNonDeleted();
+  }
 }

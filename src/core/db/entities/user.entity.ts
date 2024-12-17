@@ -42,6 +42,6 @@ export class User extends BaseRetailEntity {
   @Column({ type: 'boolean', default: false })
   active: boolean = false;
 
-  @OneToMany(() => UserRole, (ur) => ur.user, { eager: true })
+  @OneToMany(() => UserRole, (ur) => ur.user)
   userRoles?: UserRole[];
 }
