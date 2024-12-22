@@ -58,7 +58,7 @@ export class UsersRepository extends BaseRepository {
   }
 
 
-  async findOne(where: Partial<User>, relations?: string[]): Promise<User | null> {
+  async findOne(where:{}, relations?: {}): Promise<User | null> {
     return await this.getRepository(User).findOne({
       where,
       relations,

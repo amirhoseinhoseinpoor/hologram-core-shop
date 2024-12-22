@@ -12,6 +12,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Provider } from 'src/core/decorator/provider.decorator';
 import { Public } from 'src/core/decorator/public.decorator';
+import { Product } from 'src/core/db/entities/product.entity';
 
 @Controller('product')
 export class ProductController {
@@ -53,5 +54,27 @@ export class ProductController {
     return this.productService.update(code, {
       deleted: true,
     } as UpdateProductDto);
+  }
+
+
+  @Post(':code/like')
+  async saveProduct(
+    @Param('code') codeUser: string,
+    @Body('productCode') codeProduct: string,
+  ) {
+    await this.productService.saveProduct(codeUser, codeProduct);
+  }
+
+  @Delete(':code/like')
+  async unsaveProduct(
+    @Param('code') codeUser: string,
+    @Body('productCode') codeProduct: string,
+  ) {
+    await this.productService.unsaveProduct(codeUser, codeProduct);
+  }
+
+  @Get(':code/saved')
+  async getSavedProducts(@Param('code') codeUser: string): Promise<Product[]> {
+    return await this.productService.getSavedProducts(codeUser);
   }
 }

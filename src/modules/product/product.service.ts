@@ -1,3 +1,4 @@
+import { UsersRepository } from './../users/users.repository';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -7,7 +8,11 @@ import { OK, genUID } from 'src/core/misc/consts';
 
 @Injectable()
 export class ProductService {
-  constructor(private repo: ProductRepository) {}
+  constructor(
+    private repo: ProductRepository,
+
+    private userRepo: UsersRepository,
+  ) { }
 
   async create(dto: CreateProductDto) {
     let code = genUID();
@@ -54,5 +59,45 @@ export class ProductService {
 
   async countNonDeletedProducts() {
     return await this.repo.countNonDeleted();
+  }
+
+  async saveProduct(codeUser: string, codeProduct: string): Promise<void> {
+    const user = await this.userRepo.findOne({
+      code: codeUser,  // Directly pass the condition
+      relations: ['savedProducts'],  // Specify relations to load
+    });
+  
+    const product = await this.repo.findOne({ code: codeProduct });
+  
+    if (!user) throw new NotFoundException('User not found');
+    if (!product) throw new NotFoundException('Product not found');
+  
+    user.savedProducts.push(product);
+    await this.userRepo.createOrUpdate(user);
+  }
+  
+  async unsaveProduct(codeUser: string, codeProduct: string): Promise<void> {
+    const user = await this.userRepo.findOne({
+      code: codeUser,  // Directly pass the condition
+      relations: ['savedProducts'],  // Specify relations to load
+    });
+  
+    const product = await this.repo.findOne({ code: codeProduct });
+  
+    if (!user) throw new NotFoundException('User not found');
+    if (!product) throw new NotFoundException('Product not found');
+  
+    user.savedProducts = user.savedProducts.filter((p) => p.code !== codeProduct);
+    await this.userRepo.createOrUpdate(user);
+  }
+  
+  async getSavedProducts(codeUser: string): Promise<Product[]> {
+    const user = await this.userRepo.findOne({
+      code: codeUser,  // Directly pass the condition
+      relations: ['savedProducts'],  // Specify relations to load
+    });
+  
+    if (!user) throw new NotFoundException('User not found');
+    return user.savedProducts;
   }
 }
