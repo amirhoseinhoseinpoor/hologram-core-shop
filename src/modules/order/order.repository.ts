@@ -22,13 +22,19 @@ export class OrderRepository extends BaseRepository {
 
   
   async findAllQuery(filters: any) {
-    const { status } = filters;
-
+    const { status, sortBy = 'createdAt', sortOrder = 'ASC' } = filters;
+  
     const queryBuilder = this.getRepository(Order).createQueryBuilder('order');
-
+  
     if (status !== undefined) {
       queryBuilder.andWhere('"order"."status" = :status', { status });
     }
+  
+    // Apply sorting
+    if (sortBy && sortOrder) {
+      queryBuilder.orderBy(`"order"."${sortBy}"`, sortOrder.toUpperCase());
+    }
+  
     return await queryBuilder.getMany();
   }
 

@@ -88,11 +88,13 @@ export class OrderController {
   }
 
   @Get('list')
-  // @Provider()
+  @Provider()
   findAll(
     @Query('status') status: number,
+    @Query('sortBy') sortBy: string = 'createdAt', // Default to 'createdAt'
+    @Query('sortOrder') sortOrder: string = 'ASC', // Default to 'ASC'
   ) {
-    return this.orderService.findAll({ status });
+    return this.orderService.findAll({ status, sortBy, sortOrder });
   }
 
   @Get('find/:code')
