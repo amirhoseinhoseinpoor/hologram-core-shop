@@ -12,7 +12,13 @@ export class UsersRepository extends BaseRepository {
   }
 
   async createOrUpdate(user: User): Promise<User> {
-    return await this.getRepository(User).save(this.By(user));
+    try {
+      return await this.getRepository(User).save(this.By(user));
+    } catch (error) {
+      // Handle error appropriately
+      console.error('Error creating or updating user:', error);
+      throw error;
+    }
   }
 
   async findAll(
@@ -23,45 +29,55 @@ export class UsersRepository extends BaseRepository {
     sortBy: string = 'id',
     sortOrder: 'ASC' | 'DESC' = 'ASC',
   ): Promise<User[]> {
+    try {
+      const userRepo = this.getRepository(User);
+      let queryBuilder: SelectQueryBuilder<User> = userRepo.createQueryBuilder('user');
 
-    const userRepo = this.getRepository(User);
-    let queryBuilder: SelectQueryBuilder<User> = userRepo.createQueryBuilder('user');
+      // Apply filters
+      if (where) {
+        Object.keys(where).forEach((key) => {
+          if (where[key] !== undefined && where[key] !== null) {
+            queryBuilder = queryBuilder.andWhere(`user.${key} = :${key}`, { [key]: where[key] });
+          }
+        });
+      }
 
-    // Apply filters
-    if (where) {
-      Object.keys(where).forEach((key) => {
-        if (where[key] !== undefined && where[key] !== null) {
-          queryBuilder = queryBuilder.andWhere(`user.${key} = :${key}`, { [key]: where[key] });
-        }
-      });
+      // Apply sorting
+      queryBuilder = queryBuilder.orderBy(`user.${sortBy}`, sortOrder);
+
+      // Apply pagination
+      queryBuilder = queryBuilder.skip((page - 1) * limit).take(limit);
+
+      // Apply relations explicitly
+      if (relations && relations.length > 0) {
+        relations.forEach((relation) => {
+          if (relation === 'userRoles') {
+            queryBuilder = queryBuilder.leftJoinAndSelect('user.userRoles', 'userRoles');
+          } else if (relation === 'userRoles.role') {
+            queryBuilder = queryBuilder.leftJoinAndSelect('userRoles.role', 'role');
+          }
+          // Add more relations as needed
+        });
+      }
+
+      return await queryBuilder.getMany();
+    } catch (error) {
+      // Handle error appropriately
+      console.error('Error finding users:', error);
+      throw error;
     }
-
-    // Apply sorting
-    queryBuilder = queryBuilder.orderBy(`user.${sortBy}`, sortOrder);
-
-    // Apply pagination
-    queryBuilder = queryBuilder.skip((page - 1) * limit).take(limit);
-
-    // Apply relations explicitly
-    if (relations && relations.length > 0) {
-      relations.forEach((relation) => {
-        if (relation === 'userRoles') {
-          queryBuilder = queryBuilder.leftJoinAndSelect('user.userRoles', 'userRoles');
-        } else if (relation === 'userRoles.role') {
-          queryBuilder = queryBuilder.leftJoinAndSelect('userRoles.role', 'role');
-        }
-        // Add more relations as needed
-      });
-    }
-
-    return await queryBuilder.getMany();
   }
 
-
-  async findOne(where:{}, relations?: {}): Promise<User | null> {
-    return await this.getRepository(User).findOne({
-      where,
-      relations,
-    });
+  async findOne(where?: Partial<User>, relations?: string[]): Promise<User | null> {
+    try {
+      return await this.getRepository(User).findOne({
+        where,
+        relations,
+      });
+    } catch (error) {
+      // Handle error appropriately
+      console.error('Error finding user:', error);
+      throw error;
+    }
   }
 }

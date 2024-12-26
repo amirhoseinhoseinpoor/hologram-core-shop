@@ -44,9 +44,11 @@ export class UsersController {
     return this.userService.update(code, dto);
   }
 
-  
-
-
+  @Get(':code/permissions')
+  @Provider()
+  async getUserPermissions(@Param('code') code: string) {
+    return this.userService.getUserPermissions(code);
+  }
 
   @Post()
   @UsePipes(
