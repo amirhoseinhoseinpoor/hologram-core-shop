@@ -10,7 +10,6 @@ import { OK, genUID } from 'src/core/misc/consts';
 export class ProductService {
   constructor(
     private repo: ProductRepository,
-
     private userRepo: UsersRepository,
   ) { }
 
@@ -62,41 +61,30 @@ export class ProductService {
   }
 
   async saveProduct(codeUser: string, codeProduct: string): Promise<void> {
-    const user = await this.userRepo.findOne({
-      code: codeUser,  // Directly pass the condition
-      relations: ['savedProducts'],  // Specify relations to load
-    });
-  
+    const user = await this.userRepo.findOne({ code: codeUser }, ['savedProducts']);
     const product = await this.repo.findOne({ code: codeProduct });
-  
+
     if (!user) throw new NotFoundException('User not found');
     if (!product) throw new NotFoundException('Product not found');
-  
+
     user.savedProducts.push(product);
     await this.userRepo.createOrUpdate(user);
   }
-  
+
   async unsaveProduct(codeUser: string, codeProduct: string): Promise<void> {
-    const user = await this.userRepo.findOne({
-      code: codeUser,  // Directly pass the condition
-      relations: ['savedProducts'],  // Specify relations to load
-    });
-  
+    const user = await this.userRepo.findOne({ code: codeUser }, ['savedProducts']);
     const product = await this.repo.findOne({ code: codeProduct });
-  
+
     if (!user) throw new NotFoundException('User not found');
     if (!product) throw new NotFoundException('Product not found');
-  
+
     user.savedProducts = user.savedProducts.filter((p) => p.code !== codeProduct);
     await this.userRepo.createOrUpdate(user);
   }
-  
+
   async getSavedProducts(codeUser: string): Promise<Product[]> {
-    const user = await this.userRepo.findOne({
-      code: codeUser,  // Directly pass the condition
-      relations: ['savedProducts'],  // Specify relations to load
-    });
-  
+    const user = await this.userRepo.findOne({ code: codeUser }, ['savedProducts']);
+
     if (!user) throw new NotFoundException('User not found');
     return user.savedProducts;
   }

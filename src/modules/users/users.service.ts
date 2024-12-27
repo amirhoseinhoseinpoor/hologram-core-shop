@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersRepository } from './users.repository';
@@ -25,6 +25,17 @@ export class UsersService {
     return { ...user } as User;
   }
 
+  async getUserPermissions(code: string): Promise<string[]> {
+    const user = await this.repo.findOne({ code: code },  ['userRoles', 'userRoles.role', 'userRoles.role.permissions']);
+    if (!user) throw new NotFoundException('User not found');
+
+    const permissions = user.userRoles.flatMap(userRole =>
+      userRole.role.permissions.map(permission => permission.name)
+    );
+
+    return [...new Set(permissions)]; // Remove duplicates
+  }
+
   async create(dto: CreateUserDto) {
     const oldUser = await this.findOneByUsername(dto.username);
     if (oldUser?.username) throw new BadRequestException('Username exists.');
@@ -38,7 +49,7 @@ export class UsersService {
 
   async update(code: string, dto: UpdateUserDto) {
     const curUser = await this.repo.findOne({ code: code });
-    if (!curUser) throw new BadRequestException('User not found');
+    if (!curUser) throw new NotFoundException('User not found');
 
     // Update fields based on the dto  
     if (dto.firstName) curUser.firstName = dto.firstName;
@@ -81,9 +92,10 @@ export class UsersService {
 
     return await this.repo.findAll(cleanFilters, ['userRoles', 'userRoles.role'], page, limit, sortBy, sortOrder);
   }
+
   async remove(code: string) {
     const curUser = await this.repo.findOne({ code: code });
-    if (!curUser) throw new BadRequestException('User does not found');
+    if (!curUser) throw new NotFoundException('User not found');
     curUser.deleted = true;
     curUser.active = false;
     await this.repo.createOrUpdate(curUser);

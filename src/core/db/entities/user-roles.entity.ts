@@ -5,9 +5,9 @@ import { BaseRetailEntity } from './base-retail.entity';
 
 @Entity('UserRoles')
 export class UserRole extends BaseRetailEntity {
-  @ManyToOne(() => User, (u) => u.userRoles, { nullable: true })
-  user?: User;
+  @ManyToOne(() => User, user => user.userRoles, { nullable: true })
+  user: User;
 
-  @ManyToOne(() => Role, (r) => r.userRoles, { nullable: true })
-  role?: Role;
+  @ManyToOne(() => Role, role => role.userRoles, { nullable: true })
+  role: Role;
 }
