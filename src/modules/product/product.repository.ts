@@ -24,6 +24,10 @@ export class ProductRepository extends BaseRepository {
     return products?.length === 1 ? products[0] : null;
   }
 
+  async findAndCount(options?: any) {
+    return await this.getRepository(Product).findAndCount(options);
+  }
+
   async countNonDeleted() {
     return await this.getRepository(Product).count({
       where: { deleted: false },

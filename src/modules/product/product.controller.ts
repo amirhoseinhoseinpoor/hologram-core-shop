@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -16,7 +17,7 @@ import { Product } from 'src/core/db/entities/product.entity';
 
 @Controller('product')
 export class ProductController {
-  constructor(private readonly productService: ProductService) {}
+  constructor(private readonly productService: ProductService) { }
 
   @Post()
   @Provider()
@@ -34,6 +35,12 @@ export class ProductController {
   @Public()
   findAll() {
     return this.productService.findAll();
+  }
+
+  @Get('listPaginated')
+  @Public()
+  findAllPafinated(@Query('page') page = 1, @Query('limit') limit = 10) {
+    return this.productService.findPaginated(page, limit)
   }
 
   @Get('count')
