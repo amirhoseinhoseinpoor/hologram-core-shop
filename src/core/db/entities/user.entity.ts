@@ -1,9 +1,7 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 import { UserRole } from './user-roles.entity';
 import { BaseRetailEntity } from './base-retail.entity';
-import { ManyToMany } from 'typeorm';
 import { Product } from './product.entity';
-import { JoinTable } from 'typeorm';
 
 @Entity('Users')
 export class User extends BaseRetailEntity {
