@@ -19,10 +19,20 @@ export class OrderRepository extends BaseRepository {
   async createOrUpdate(order: Order) {
     return await this.getRepository(Order).save(this.By(order));
   }
-
-  
-  async findAllQuery(filters: any) {
-    const { status, sortBy = 'createdAt', sortOrder = 'ASC' } = filters;
+  async findAllQuery(filters: {
+    status?: number;
+    sortBy?: string;
+    sortOrder?: string;
+    page?: number;
+    limit?: number;
+  }): Promise<{ data: Order[]; total: number }> {
+    const {
+      status,
+      sortBy = 'createdAt',
+      sortOrder = 'ASC',
+      page = 1,
+      limit = 10,
+    } = filters;
   
     const queryBuilder = this.getRepository(Order).createQueryBuilder('order');
   
@@ -30,12 +40,40 @@ export class OrderRepository extends BaseRepository {
       queryBuilder.andWhere('"order"."status" = :status', { status });
     }
   
-    // Apply sorting
+    // Update allowedSortFields to include 'firstName' and 'lastName'
+    const allowedSortFields = [
+      'createdAt',
+      'status',
+      'code',
+      'firstName',
+      'lastName',
+      // Add other fields as necessary
+    ];
+  
     if (sortBy && sortOrder) {
-      queryBuilder.orderBy(`"order"."${sortBy}"`, sortOrder.toUpperCase());
+      if (!allowedSortFields.includes(sortBy)) {
+        throw new Error(`Invalid sortBy field: ${sortBy}`);
+      }
+  
+      const sortDirection = sortOrder.toUpperCase() === 'DESC' ? 'DESC' : 'ASC';
+  
+      if (sortBy === 'firstName' || sortBy === 'lastName') {
+        // // Assuming 'user' is the relation name
+        // queryBuilder.leftJoinAndSelect('order.user', 'user');
+        // queryBuilder.orderBy(`user.${sortBy}`, sortDirection);
+      } else {
+        queryBuilder.orderBy(`order.${sortBy}`, sortDirection);
+      }
     }
   
-    return await queryBuilder.getMany();
+    // Apply pagination
+    const skip = (page - 1) * limit;
+    queryBuilder.skip(skip).take(limit);
+  
+    // Execute query and get [data, total]
+    const [data, total] = await queryBuilder.getManyAndCount();
+  
+    return { data, total };
   }
 
   async countOrder(filters: any): Promise<number> {

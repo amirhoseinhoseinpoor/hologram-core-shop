@@ -21,10 +21,9 @@ import { PaymentOrderDto } from './dto/payment-order.dto';
 import { OtherOrderDto } from './dto/other-order.dto';
 import { CountOrderDto } from './dto/count-order.dto';
 
-
 @Controller('order')
 export class OrderController {
-  constructor(private readonly orderService: OrderService) { }
+  constructor(private readonly orderService: OrderService) {}
 
   @Post('request')
   createRequest(@Body() dto: RequestOrderDto) {
@@ -81,9 +80,7 @@ export class OrderController {
 
   @Get('count')
   @Public()
-  countOrders(
-    @Query('status') status?: number,
-  ): Promise<CountOrderDto> {
+  countOrders(@Query('status') status?: number): Promise<CountOrderDto> {
     return this.orderService.countOrders({ status });
   }
 
@@ -93,8 +90,20 @@ export class OrderController {
     @Query('status') status: number,
     @Query('sortBy') sortBy: string = 'createdAt', // Default to 'createdAt'
     @Query('sortOrder') sortOrder: string = 'ASC', // Default to 'ASC'
+    @Query('page') page: number = 1, // Default to page 1
+    @Query('limit') limit: number = 10,
   ) {
-    return this.orderService.findAll({ status, sortBy, sortOrder });
+    // Ensure page and limit are positive integers
+    const validatedPage = Math.max(1, page);
+    const validatedLimit = Math.max(1, limit);
+
+    return this.orderService.findAll({
+      status,
+      sortBy,
+      sortOrder,
+      page: validatedPage,
+      limit: validatedLimit,
+    });
   }
 
   @Get('find/:code')
