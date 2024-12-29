@@ -2,6 +2,7 @@ import { Column, Entity, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 import { UserRole } from './user-roles.entity';
 import { BaseRetailEntity } from './base-retail.entity';
 import { Product } from './product.entity';
+import { UserProduct } from './user-product.entity';
 
 @Entity('Users')
 export class User extends BaseRetailEntity {
@@ -46,7 +47,6 @@ export class User extends BaseRetailEntity {
   @OneToMany(() => UserRole, userRole => userRole.user)
   userRoles: UserRole[];
 
-  @ManyToMany(() => Product, product => product.savedBy)
-  @JoinTable()
+  @OneToMany(() => UserProduct, userProduct => userProduct.user)
   savedProducts: Product[];
 }

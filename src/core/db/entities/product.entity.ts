@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { BaseRetailEntity } from './base-retail.entity';
 import { User } from './user.entity';
-import { ManyToMany } from 'typeorm';
+import { UserProduct } from './user-product.entity';
 
 @Entity('Products')
 export class Product extends BaseRetailEntity {
@@ -23,6 +23,6 @@ export class Product extends BaseRetailEntity {
   @Column('jsonb', { nullable: true })
   media?: object[];
 
-  @ManyToMany(() => User, user => user.savedProducts)
+  @OneToMany(() => UserProduct, userProduct => userProduct.product)
   savedBy: User[];
 }
