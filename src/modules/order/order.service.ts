@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException , InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { Order } from 'src/core/db/entities/order.entity';
 import { OrderRepository } from './order.repository';
 import { OK, genUID } from 'src/core/misc/consts';
@@ -13,13 +17,12 @@ import { OtherOrderDto } from './dto/other-order.dto';
 import { ChatGateway } from '../gateways/chat.gateway';
 import { CountOrderDto } from './dto/count-order.dto';
 
-
 @Injectable()
 export class OrderService {
   constructor(
     private repo: OrderRepository,
     private chatGateway: ChatGateway,
-  ) { }
+  ) {}
 
   async create(dto: RequestOrderDto) {
     let code = genUID();
@@ -73,8 +76,8 @@ export class OrderService {
       throw new NotFoundException(`Order not found`);
     }
 
-    const exactOrder = orders.find(order => {
-      order.code == code
+    const exactOrder = orders.find((order) => {
+      order.code == code;
     });
 
     if (!exactOrder) {
@@ -85,25 +88,47 @@ export class OrderService {
     await this.repo.createOrUpdate({ ...exactOrder } as Order);
   }
 
-  async findAll(filters: { status?: number; sortBy?: string; sortOrder?: string }) {
-    const orders = await this.repo.findAllQuery(filters);
-    if (!orders?.length) return [];
-    return orders.map((order) => {
-      return {
-        code: order.code,
-        createdBy: order.createdBy,
-        date: order.createdAt,
-        status: order.status,
-        step: order.step,
-        request: order.request,
-        reqComment: order.reqComment,
-        document: order.document,
-        chatImage: order.chatImage,
-        chat: order.chat,
-        delivery: order.delivery,
-        payment: order.payment,
-      };
+  async findAll(filters: {
+    status?: number;
+    sortBy?: string;
+    sortOrder?: string;
+    page?: number;
+    limit?: number;
+  }) {
+    const { status, sortBy, sortOrder, page, limit } = filters;
+
+    // Fetch paginated data and total count
+    const { data: orders, total } = await this.repo.findAllQuery({
+      status,
+      sortBy,
+      sortOrder,
+      page,
+      limit,
     });
+
+    // Map the orders to the desired format
+    const mappedOrders = orders.map((order) => ({
+      code: order.code,
+      createdBy: order.createdBy,
+      date: order.createdAt,
+      status: order.status,
+      step: order.step,
+      request: order.request,
+      reqComment: order.reqComment,
+      document: order.document,
+      chatImage: order.chatImage,
+      chat: order.chat,
+      delivery: order.delivery,
+      payment: order.payment,
+    }));
+
+    return {
+      data: mappedOrders,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   async update(
@@ -141,9 +166,7 @@ export class OrderService {
     return OK;
   }
 
-  async countOrders(filters: {
-    status?: number;
-  }): Promise<CountOrderDto> {
+  async countOrders(filters: { status?: number }): Promise<CountOrderDto> {
     try {
       const count = await this.repo.countOrder(filters);
       return { count };

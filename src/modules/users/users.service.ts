@@ -26,11 +26,11 @@ export class UsersService {
   }
 
   async getUserPermissions(code: string): Promise<string[]> {
-    const user = await this.repo.findOne({ code: code },  ['userRoles', 'userRoles.role', 'userRoles.role.permissions']);
+    const user = await this.repo.findOne({ code: code }, ['userRoles', 'userRoles.role', 'userRoles.role.permissions' , 'userRoles.role.permissions.permission']);
     if (!user) throw new NotFoundException('User not found');
 
     const permissions = user.userRoles.flatMap(userRole =>
-      userRole.role.permissions.map(permission => permission.name)
+      userRole.role.permissions.map(rp => rp.permission.name)
     );
 
     return [...new Set(permissions)]; // Remove duplicates

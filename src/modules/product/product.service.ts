@@ -48,6 +48,24 @@ export class ProductService {
     });
   }
 
+  async findPaginated(page: number, limit: number) {
+    const skip = (page - 1) * limit; 
+
+    const [blogs, total] = await this.repo.findAndCount({
+      where: { deleted: false }, 
+      order: { createdAt: 'DESC' }, 
+      skip: skip, 
+      take: limit,
+    });
+
+    return {
+      data: blogs,
+      total: total,
+      page: page,
+      pageCount: Math.ceil(total / limit),
+    };
+  }
+
   async update(code: string, dto: UpdateProductDto) {
     const product = await this.repo.findOne({ code: code });
     if (!product) throw new NotFoundException(`Product not found`);

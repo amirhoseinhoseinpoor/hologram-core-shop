@@ -1,14 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from 'typeorm';
-import { Role } from './roles.entity';
+import { Entity, Column, OneToMany } from 'typeorm';
+import { BaseRetailEntity } from './base-retail.entity';
+import { RolesPermission } from './roles-permission.entity';
 
 @Entity('Permission')
-export class Permission {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column()
+export class Permission extends BaseRetailEntity {
+  @Column({ type: 'varchar', length: 50, nullable: false, unique: true })
   name: string;
 
-  @ManyToMany(() => Role, role => role.permissions)
-  roles: Role[];
+  @OneToMany(() => RolesPermission, role => role.permission)
+  permissions: RolesPermission[];
 }
