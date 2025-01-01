@@ -49,6 +49,12 @@ export class ProductController {
     return this.productService.countNonDeletedProducts();
   }
 
+  @Get('names-navIds')
+  @Public()
+  getAllNamesAndNavIds() {
+    return this.productService.getAllNamesAndNavIds();
+  }
+
   @Get(':code')
   @Public()
   findOne(@Param('code') code: string) {
