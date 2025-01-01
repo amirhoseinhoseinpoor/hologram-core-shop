@@ -9,6 +9,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { OrderService } from './order.service';
+import { ChatGateway } from '../gateways/chat.gateway';
 import { Provider } from 'src/core/decorator/provider.decorator';
 import { Public } from 'src/core/decorator/public.decorator';
 import { RequestOrderDto } from './dto/request-order.dto';
@@ -23,7 +24,11 @@ import { CountOrderDto } from './dto/count-order.dto';
 
 @Controller('order')
 export class OrderController {
-  constructor(private readonly orderService: OrderService) {}
+  constructor(
+    private readonly orderService: OrderService,
+    private readonly chatGateway: ChatGateway,
+
+  ) {}
 
   @Post('request')
   createRequest(@Body() dto: RequestOrderDto) {
@@ -55,6 +60,10 @@ export class OrderController {
 
   @Patch('chat/:code')
   UpdateChat(@Param('code') code: string, @Body() dto: ChatOrderDto) {
+    const { chat } = dto;
+
+    this.chatGateway.sendMessage('message', { code, chat });
+
     return this.orderService.update(code, dto);
   }
 
