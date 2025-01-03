@@ -1,27 +1,40 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as dotenv from 'dotenv';
+
+dotenv.config(); // Load .env file
+
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Enable CORS using NestJS's built-in method
+  // Enable CORS with environment variables
+  const allowedOrigins = process.env.CORS_ORIGINS?.split(',') || [];
+
   app.enableCors({
-    origin: [
-      'http://localhost:7000',
-      'http://localhost:3000',
-      'http://195.248.240.132',
-      'http://195.248.240.132:7000',
-      'http://195.248.240.132:3000',
-      'http://195.248.240.132:80',
-      'http://195.248.240.132:7001',
-      'http://195.248.240.132:3001',
-      'http://195.248.240.132:81',
-    ], // Allow requests from this origin (your Next.js front-end)
-    methods: 'GET,POST,PUT,PATCH,DELETE', // Allowed methods
-    allowedHeaders: 'X-Requested-With,Content-Type,Authorization,mode', // Allowed headers
-    credentials: true, // Allow cookies and authorization headers
+      origin: allowedOrigins,
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+      credentials: true,
   });
+
+  // Enable CORS using NestJS's built-in method
+  // app.enableCors({
+  //   origin: [
+  //     'http://localhost:7000',
+  //     'http://localhost:3000',
+  //     'http://195.248.240.132',
+  //     'http://195.248.240.132:7000',
+  //     'http://195.248.240.132:3000',
+  //     'http://195.248.240.132:80',
+  //     'http://195.248.240.132:7001',
+  //     'http://195.248.240.132:3001',
+  //     'http://195.248.240.132:81',
+    // ], // Allow requests from this origin (your Next.js front-end)
+  //   methods: 'GET,POST,PUT,PATCH,DELETE', // Allowed methods
+  //   allowedHeaders: 'X-Requested-With,Content-Type, Accept,Authorization,mode', // Allowed headers
+  //   credentials: true, // Allow cookies and authorization headers
+  // });
 
   // app.use(function(req, res, next) {
   //   res.set('Access-Control-Allow-Origin', 'https://localhost');
