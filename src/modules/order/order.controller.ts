@@ -55,6 +55,11 @@ export class OrderController {
     @Param('code') code: string,
     @Body() dto: DocCommentOrderDto,
   ) {
+
+    const { chatImage } = dto;
+
+    this.chatGateway.sendMessage('chatImageUpdate' , {code , chatImage})
+
     return this.orderService.update(code, dto);
   }
 
