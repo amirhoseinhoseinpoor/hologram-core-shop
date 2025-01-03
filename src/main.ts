@@ -14,6 +14,9 @@ async function bootstrap() {
       'http://195.248.240.132:7000',
       'http://195.248.240.132:3000',
       'http://195.248.240.132:80',
+      'http://195.248.240.132:7001',
+      'http://195.248.240.132:3001',
+      'http://195.248.240.132:81',
     ], // Allow requests from this origin (your Next.js front-end)
     methods: 'GET,POST,PUT,PATCH,DELETE', // Allowed methods
     allowedHeaders: 'X-Requested-With,Content-Type,Authorization,mode', // Allowed headers
