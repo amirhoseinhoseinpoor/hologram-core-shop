@@ -49,12 +49,12 @@ export class ProductService {
   }
 
   async findPaginated(page: number, limit: number) {
-    const skip = (page - 1) * limit; 
+    const skip = (page - 1) * limit;
 
     const [blogs, total] = await this.repo.findAndCount({
-      where: { deleted: false }, 
-      order: { createdAt: 'DESC' }, 
-      skip: skip, 
+      where: { deleted: false },
+      order: { createdAt: 'DESC' },
+      skip: skip,
       take: limit,
     });
 
@@ -105,5 +105,13 @@ export class ProductService {
 
     if (!user) throw new NotFoundException('User not found');
     return user.savedProducts;
+  }
+  async getAllNamesAndNavIds() {
+    const products = await this.repo.findAll();
+    if (!products) throw new NotFoundException("No products found");
+    return products.map(product => ({
+      name: product.name,
+      navId: product.navId,
+    }));
   }
 }
