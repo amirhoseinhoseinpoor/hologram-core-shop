@@ -100,21 +100,23 @@ export class OrderRepository extends BaseRepository {
     return orders?.length === 1 ? orders[0] : null;
   }
 
-  async findById() {
-    const userInfo = this.req[USER_INFO_KEY];
-
-    if (!userInfo || !userInfo.id) {
-      throw new BadRequestException('User ID not found in token');
-    }
-
-    const orders = await this.getRepository(Order).find({
-      where: { createdBy: userInfo.id },
-    });
-
-    if (!orders || orders.length === 0) {
-      return null;
-    }
-
-    return orders;
-  }
+  async findById() {  
+    const userInfo = this.req[USER_INFO_KEY];  
+  
+    if (!userInfo || !userInfo.id) {  
+      throw new BadRequestException('User ID not found in token');  
+    }  
+  
+    const orders = await this.getRepository(Order)  
+      .createQueryBuilder('order')  
+      .where('order.createdBy = :userId', { userId: userInfo.id })  
+      .orderBy('order.createdAt', 'DESC')  
+      .getMany();  // This will fetch the sorted orders  
+  
+    if (!orders || orders.length === 0) {  
+      return null;  
+    }  
+  
+    return orders;  
+  }  
 }
