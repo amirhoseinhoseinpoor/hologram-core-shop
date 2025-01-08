@@ -12,11 +12,18 @@ async function bootstrap() {
   // Enable CORS with environment variables
   const allowedOrigins = process.env.CORS_ORIGINS?.split(',') || [];
 
-  app.enableCors({
-      origin: allowedOrigins,
-      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-      credentials: true,
-  });
+   app.enableCors({
+     origin: allowedOrigins, // Allow requests from this origin (your Next.js front-end)
+     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS', // Allowed methods
+     allowedHeaders: 'X-Requested-With, Content-Type, Accept, Authorization, mode, X-CSRF-Token, Accept-Version, Content-Length, Content-MD5, Date, X-Api-Version', // Allowed headers
+     credentials: true, // Allow cookies and authorization headers
+   });
+
+//  app.enableCors({
+//      origin: allowedOrigins,
+//      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+//      credentials: true,
+//  });
 
   // Enable CORS using NestJS's built-in method
   // app.enableCors({
