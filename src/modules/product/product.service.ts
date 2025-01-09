@@ -32,6 +32,7 @@ export class ProductService {
       name: product.name,
       info: product.info,
       media: product.media,
+      filedOrder: product.filedOrder,
     };
   }
 
