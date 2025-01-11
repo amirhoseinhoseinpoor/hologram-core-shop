@@ -19,7 +19,6 @@ export class BlogsRepository extends BaseRepository {
     return await this.find(Blogs, { ...where, deleted: false });
   }
 
-
   async findAndCount(options?: any) {
     return await this.getRepository(Blogs).findAndCount(options);
   }

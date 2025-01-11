@@ -33,13 +33,15 @@ export class OrderRepository extends BaseRepository {
       page = 1,
       limit = 10,
     } = filters;
-  
+
     const queryBuilder = this.getRepository(Order).createQueryBuilder('order');
-  
+
+    queryBuilder.andWhere('"order"."deleted" = :deleted', { deleted: false });
+
     if (status !== undefined) {
       queryBuilder.andWhere('"order"."status" = :status', { status });
     }
-  
+
     // Update allowedSortFields to include 'firstName' and 'lastName'
     const allowedSortFields = [
       'createdAt',
@@ -49,14 +51,14 @@ export class OrderRepository extends BaseRepository {
       'lastName',
       // Add other fields as necessary
     ];
-  
+
     if (sortBy && sortOrder) {
       if (!allowedSortFields.includes(sortBy)) {
         throw new Error(`Invalid sortBy field: ${sortBy}`);
       }
-  
+
       const sortDirection = sortOrder.toUpperCase() === 'DESC' ? 'DESC' : 'ASC';
-  
+
       if (sortBy === 'firstName' || sortBy === 'lastName') {
         // // Assuming 'user' is the relation name
         // queryBuilder.leftJoinAndSelect('order.user', 'user');
@@ -65,14 +67,14 @@ export class OrderRepository extends BaseRepository {
         queryBuilder.orderBy(`order.${sortBy}`, sortDirection);
       }
     }
-  
+
     // Apply pagination
     const skip = (page - 1) * limit;
     queryBuilder.skip(skip).take(limit);
-  
+
     // Execute query and get [data, total]
     const [data, total] = await queryBuilder.getManyAndCount();
-  
+
     return { data, total };
   }
 
@@ -100,23 +102,24 @@ export class OrderRepository extends BaseRepository {
     return orders?.length === 1 ? orders[0] : null;
   }
 
-  async findById() {  
-    const userInfo = this.req[USER_INFO_KEY];  
-  
-    if (!userInfo || !userInfo.id) {  
-      throw new BadRequestException('User ID not found in token');  
-    }  
-  
-    const orders = await this.getRepository(Order)  
-      .createQueryBuilder('order')  
-      .where('order.createdBy = :userId', { userId: userInfo.id })  
-      .orderBy('order.createdAt', 'DESC')  
-      .getMany();  // This will fetch the sorted orders  
-  
-    if (!orders || orders.length === 0) {  
-      return null;  
-    }  
-  
-    return orders;  
-  }  
+  async findById() {
+    const userInfo = this.req[USER_INFO_KEY];
+
+    if (!userInfo || !userInfo.id) {
+      throw new BadRequestException('User ID not found in token');
+    }
+
+    const orders = await this.getRepository(Order)
+      .createQueryBuilder('order')
+      .where('"order"."deleted" = :deleted', { deleted: false })
+      .andWhere('order.createdBy = :userId', { userId: userInfo.id })
+      .orderBy('order.createdAt', 'DESC')
+      .getMany();
+
+    if (!orders || orders.length === 0) {
+      return null;
+    }
+
+    return orders;
+  }
 }
