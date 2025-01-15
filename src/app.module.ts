@@ -40,7 +40,7 @@ import { AnalyticsModule } from './modules/analytics/analytics.module';
       port: +process.env.DB_PORT,
       password: process.env.DB_PASSWORD,
       username: process.env.DB_USER,
-      database: process.env.DB_NAME,
+      database: process.env.APP_MODE === 'prod' ? process.env.DB_NAME : process.env.DB_DEV_NAME,
       synchronize: /true/i.test(process.env.DB_SYNC),
       logging: /true/i.test(process.env.DB_LOGGING),
       dropSchema: /true/i.test(process.env.DB_DROP_SCHEMA),
