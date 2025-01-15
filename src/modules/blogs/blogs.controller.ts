@@ -20,13 +20,13 @@ export class BlogsController {
   constructor(private readonly blogsService: BlogsService) {}
 
   @Post()
-  // @Provider()
+  @Provider()
   create(@Body() dto: CreateBlogDto) {
     return this.blogsService.create(dto);
   }
 
   @Patch(':code')
-  // @Provider()
+  @Provider()
   update(@Param('code') code: string, @Body() dto: UpdateBlogDto) {
     return this.blogsService.update(code, dto);
   }

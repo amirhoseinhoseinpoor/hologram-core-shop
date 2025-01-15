@@ -26,6 +26,9 @@ export class Product extends BaseRetailEntity {
   @Column('jsonb', { nullable: true })
   media?: object[];
 
+  @Column('jsonb' , {nullable : true})
+  filedOrder: object[];
+
   @OneToMany(() => UserProduct, userProduct => userProduct.product)
   savedBy: User[];
 }
