@@ -18,8 +18,6 @@ async function bootstrap() {
       ALLOWED_ORIGINS.push(`${host}:${port}`);
   }
 
-  console.log('ALLOWED_ORIGINS', ALLOWED_ORIGINS);
-
   app.enableCors({
     origin: ALLOWED_ORIGINS,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS', // Allowed methods
