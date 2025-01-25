@@ -25,15 +25,31 @@ export class UsersService {
     return { ...user } as User;
   }
 
-  async getUserPermissions(code: string): Promise<string[]> {
-    const user = await this.repo.findOne({ code: code }, ['userRoles', 'userRoles.role', 'userRoles.role.permissions' , 'userRoles.role.permissions.permission']);
+  async getUserPermissions(code: string): Promise<{ name: string; htmlId: string }[]> {
+    // Fetch the user with roles and permissions
+    const user = await this.repo.findOne(
+      { code: code },
+      ['userRoles', 'userRoles.role', 'userRoles.role.permissions', 'userRoles.role.permissions.permission']
+    );
     if (!user) throw new NotFoundException('User not found');
 
+    // Extract permissions with both name and htmlId
     const permissions = user.userRoles.flatMap(userRole =>
-      userRole.role.permissions.map(rp => rp.permission.name)
+      userRole.role.permissions.map(rp => ({
+        name: rp.permission.name,
+        htmlId: rp.permission.htmlId, // Assuming the permission entity has an 'htmlId' field
+      }))
     );
 
-    return [...new Set(permissions)]; // Remove duplicates
+    // Remove duplicates based on both name and htmlId
+    const uniquePermissions = permissions.reduce((acc, current) => {
+      if (!acc.some(p => p.name === current.name && p.htmlId === current.htmlId)) {
+        acc.push(current);
+      }
+      return acc;
+    }, []);
+
+    return uniquePermissions;
   }
 
   async create(dto: CreateUserDto) {

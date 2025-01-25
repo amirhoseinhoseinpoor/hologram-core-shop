@@ -7,6 +7,9 @@ export class Permission extends BaseRetailEntity {
   @Column({ type: 'varchar', length: 50, nullable: false, unique: true })
   name: string;
 
+  @Column({ type: 'varchar', length: 50, nullable: false, unique: true })
+  htmlId: string;
+
   @OneToMany(() => RolesPermission, role => role.permission)
   permissions: RolesPermission[];
 }

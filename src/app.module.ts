@@ -21,6 +21,8 @@ import { BannerModule } from './modules/banner/banner.module';
 import { HeaderModule } from './modules/header/header.module';
 import { GateWaysModule } from './modules/gateways/gateways.module';
 import { AnalyticsModule } from './modules/analytics/analytics.module';
+import { RolesPermissionModule } from './modules/roles-permission/roles-permission.module';
+import { PermissionModule } from './modules/permission/permission.module';
 
 @Module({
   imports: [
@@ -55,6 +57,8 @@ import { AnalyticsModule } from './modules/analytics/analytics.module';
     HeaderModule,
     GateWaysModule,
     AnalyticsModule,
+    RolesPermissionModule,
+    PermissionModule,
   ],
   controllers: [AppController],
   providers: [
