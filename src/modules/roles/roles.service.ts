@@ -18,10 +18,15 @@ export class RolesService {
     return { ...dto } as Role;
   }
 
+  // async create(dto: CreateRoleDto) {
+  //   const currRole = await this.findBy({ name: ILike(dto.name) });
+  //   if (currRole?.length) throw new BadRequestException('Role exists.');
+  //   return this.repo.createOrUpdate(this.asRole(dto));
+  // }
+
   async create(dto: CreateRoleDto) {
-    const currRole = await this.findBy({ name: ILike(dto.name) });
-    if (currRole?.length) throw new BadRequestException('Role exists.');
-    return this.repo.createOrUpdate(this.asRole(dto));
+    const { name, permissionIds } = dto;
+    return await this.repo.createRoleWithPermissions(name, permissionIds);
   }
 
   async findBy(where: {}) {

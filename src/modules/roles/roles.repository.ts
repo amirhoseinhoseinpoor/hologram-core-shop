@@ -1,4 +1,4 @@
-import { Inject, Injectable, Scope , NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, Scope , NotFoundException , BadRequestException } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import { BaseRepository } from 'src/core/db/base.repository';
@@ -35,6 +35,59 @@ export class RolesRepository extends BaseRepository {
 
   async findAll() {
     return await this.getRepository(Role).find({ 
+      relations: ['permissions', 'permissions.permission'],
+    });
+  }
+
+  async createRoleWithPermissions(name: string, permissionIds: number[]) {
+    const role = new Role();
+    role.name = name;
+  
+    // First, check if a role with the same name already exists
+    const existingRole = await this.getRepository(Role).findOne({ where: { name } });
+  
+    if (existingRole) {
+      // If role already exists, throw a BadRequestException with a meaningful message
+      throw new BadRequestException(`Role with name "${name}" already exists.`);
+    }
+  
+    // Now proceed with creating the new role
+    const permissions = await this.getRepository(Permission).findByIds(permissionIds);
+  
+    // Map the permissions to RolesPermission entities
+    const rolesPermissions = permissions.map(permission => {
+      const rolesPermission = new RolesPermission();
+      rolesPermission.role = role;
+      rolesPermission.permission = permission;
+      return rolesPermission;
+    });
+  
+    // Save the role first
+    const savedRole = await this.getRepository(Role).save(role);
+  
+    // Check if the role already has these permissions to avoid duplicates
+    const existingPermissions = await this.getRepository(RolesPermission)
+      .createQueryBuilder('rolesPermission')
+      .innerJoin('rolesPermission.permission', 'permission')
+      .where('rolesPermission.roleId = :roleId', { roleId: savedRole.id })
+      .andWhere('permission.id IN (:...permissionIds)', { permissionIds })
+      .getMany();
+  
+    // Filter out the permissions that already exist for the role
+    const newRolesPermissions = rolesPermissions.filter(rolesPermission => {
+      return !existingPermissions.some(existing => 
+        existing.permission.id === rolesPermission.permission.id
+      );
+    });
+  
+    // Only insert the new permissions that don't already exist
+    if (newRolesPermissions.length > 0) {
+      await this.getRepository(RolesPermission).save(newRolesPermissions);
+    }
+  
+    // Return the role with the permissions that have been successfully assigned
+    return await this.getRepository(Role).findOne({
+      where: { id: savedRole.id },
       relations: ['permissions', 'permissions.permission'],
     });
   }
