@@ -44,7 +44,7 @@ export class AuthController {
   @UseInterceptors(TransactionInterceptor)
   @Post('createUserByAdmin')
   async createUserByAdmin(@Body() dto: CreateUserDto) {
-    if (!dto.domain || !dto.roleIds || dto.roleIds.length === 0) {
+    if (!dto.domain) {
       throw new BadRequestException('Domain and roleIds are required for admin user creation.');
     }
     return await this.authService.signUp(dto, dto.domain, dto.roleIds); 
