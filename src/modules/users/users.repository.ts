@@ -2,7 +2,7 @@ import { Inject, Injectable, Scope } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import { BaseRepository } from 'src/core/db/base.repository';
-import { DataSource , SelectQueryBuilder } from 'typeorm';
+import { DataSource, SelectQueryBuilder } from 'typeorm';
 import { User } from 'src/core/db/entities/user.entity';
 
 @Injectable({ scope: Scope.REQUEST })
@@ -25,13 +25,20 @@ export class UsersRepository extends BaseRepository {
   ): Promise<User[]> {
     try {
       const userRepo = this.getRepository(User);
-      let queryBuilder: SelectQueryBuilder<User> = userRepo.createQueryBuilder('user');
+      let queryBuilder: SelectQueryBuilder<User> =
+        userRepo.createQueryBuilder('user');
+
+      queryBuilder = queryBuilder.where('user.deleted = :deleted', {
+        deleted: false,
+      });
 
       // Apply filters
       if (where) {
         Object.keys(where).forEach((key) => {
           if (where[key] !== undefined && where[key] !== null) {
-            queryBuilder = queryBuilder.andWhere(`user.${key} = :${key}`, { [key]: where[key] });
+            queryBuilder = queryBuilder.andWhere(`user.${key} = :${key}`, {
+              [key]: where[key],
+            });
           }
         });
       }
@@ -46,9 +53,15 @@ export class UsersRepository extends BaseRepository {
       if (relations && relations.length > 0) {
         relations.forEach((relation) => {
           if (relation === 'userRoles') {
-            queryBuilder = queryBuilder.leftJoinAndSelect('user.userRoles', 'userRoles');
+            queryBuilder = queryBuilder.leftJoinAndSelect(
+              'user.userRoles',
+              'userRoles',
+            );
           } else if (relation === 'userRoles.role') {
-            queryBuilder = queryBuilder.leftJoinAndSelect('userRoles.role', 'role');
+            queryBuilder = queryBuilder.leftJoinAndSelect(
+              'userRoles.role',
+              'role',
+            );
           }
           // Add more relations as needed
         });
@@ -62,7 +75,10 @@ export class UsersRepository extends BaseRepository {
     }
   }
 
-  async findOne(where?: Partial<User>, relations?: string[]): Promise<User | null> {
+  async findOne(
+    where?: Partial<User>,
+    relations?: string[],
+  ): Promise<User | null> {
     try {
       return await this.getRepository(User).findOne({
         where,
