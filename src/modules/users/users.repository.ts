@@ -12,13 +12,7 @@ export class UsersRepository extends BaseRepository {
   }
 
   async createOrUpdate(user: User): Promise<User> {
-    try {
-      return await this.getRepository(User).save(this.By(user));
-    } catch (error) {
-      // Handle error appropriately
-      console.error('Error creating or updating user:', error);
-      throw error;
-    }
+    return await this.getRepository(User).save(this.By(user));
   }
 
   async findAll(
