@@ -140,6 +140,7 @@ export class OrderService {
       | ChatOrderDto
       | DeliveryOrderDto
       | PaymentOrderDto
+      | RequestOrderDto
       | OtherOrderDto,
   ) {
     const order = await this.repo.findOne({ code: code });

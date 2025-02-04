@@ -35,6 +35,14 @@ export class OrderController {
     return this.orderService.create(dto);
   }
 
+  @Post('edit/request/:code')
+  UpdateRequest(
+    @Param('code') code: string,
+    @Body() dto: RequestOrderDto
+  ) {
+    return this.orderService.update(code, dto);
+  }
+
   @Patch('request/:code/comment')
   @Provider()
   UpdateRequestComment(
