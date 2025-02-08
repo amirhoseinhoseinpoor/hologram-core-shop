@@ -20,7 +20,7 @@ import { TransactionInterceptor } from 'src/core/db/transaction.interceptor';
 import { Provider } from 'src/core/decorator/provider.decorator';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
-@ApiTags('Users')
+@ApiTags('users')
 @Controller('users')
 export class UsersController {
   constructor(private userService: UsersService) {}
@@ -41,7 +41,12 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'User updated successfully.' })
   @ApiResponse({ status: 400, description: 'Invalid input or user not found.' })
   update(@Param('code') code: string, @Body() dto: UpdateUserDto) {
+    console.log(code);
+    console.log(dto);
+    
     return this.userService.update(code, dto);
+    
+    
   }
 
   @Get(':code/permissions')

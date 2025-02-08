@@ -74,7 +74,8 @@ export class UsersService {
     if (dto.email) curUser.email = dto.email;
     if (dto.gender) curUser.gender = dto.gender;
     if (dto.domain) curUser.domain = dto.domain;
-    if (typeof dto.active !== 'undefined') curUser.active = dto.active; // Check for update on active status  
+    if (dto.password) curUser.password = await bcrypt.hash(dto.password, 12);
+    if (typeof dto.active !== 'undefined') curUser.active = dto.active;  
 
     // Checking for roleIds to update roles if provided  
     if (Array.isArray(dto.roleIds)) {
