@@ -16,7 +16,14 @@ export class ProductRepository extends BaseRepository {
   }
 
   async findAll(where?: {}) {
-    return await this.find(Product, { ...where, deleted: false });
+    const queryBuilder =
+      this.getRepository(Product).createQueryBuilder('product');
+
+    queryBuilder.andWhere('"product"."deleted" = :deleted', { deleted: false });
+
+    queryBuilder.orderBy(`product.createdAt`, 'ASC');
+
+    return await queryBuilder.getMany();
   }
 
   async findOne(where: {}) {
