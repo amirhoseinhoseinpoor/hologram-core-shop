@@ -26,9 +26,14 @@ export class ProductRepository extends BaseRepository {
     return await queryBuilder.getMany();
   }
 
-  async findOne(where: {}) {
-    const products = await this.findAll(where);
-    return products?.length === 1 ? products[0] : null;
+  // async findOne(where: {}) {
+  //   const products = await this.findAll(where);
+  //   return products?.length === 1 ? products[0] : null;
+  // }
+
+  async findOne(code: string): Promise<Product | null> {
+    const repo = this.getRepository(Product);
+    return await repo.findOne({ where: { code, deleted: false } });
   }
 
   async findAndCount(options?: any) {

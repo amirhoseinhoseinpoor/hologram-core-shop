@@ -25,7 +25,7 @@ export class ProductService {
   }
 
   async findOne(code: string) {
-    const product = await this.repo.findOne({ code: code });
+    const product = await this.repo.findOne(code);
     if (!product) throw new NotFoundException(`Product not found`);
     return {
       code: product.code,
@@ -70,7 +70,7 @@ export class ProductService {
   }
 
   async update(code: string, dto: UpdateProductDto) {
-    const product = await this.repo.findOne({ code: code });
+    const product = await this.repo.findOne(code);
     if (!product) throw new NotFoundException(`Product not found`);
     Object.assign(product, dto);
     await this.repo.createOrUpdate({ ...product, code: code } as Product);
@@ -83,7 +83,7 @@ export class ProductService {
 
   async saveProduct(codeUser: string, codeProduct: string): Promise<void> {
     const user = await this.userRepo.findOne({ code: codeUser }, ['savedProducts']);
-    const product = await this.repo.findOne({ code: codeProduct });
+    const product = await this.repo.findOne(codeProduct);
 
     if (!user) throw new NotFoundException('User not found');
     if (!product) throw new NotFoundException('Product not found');
@@ -94,7 +94,7 @@ export class ProductService {
 
   async unsaveProduct(codeUser: string, codeProduct: string): Promise<void> {
     const user = await this.userRepo.findOne({ code: codeUser }, ['savedProducts']);
-    const product = await this.repo.findOne({ code: codeProduct });
+    const product = await this.repo.findOne(codeProduct);
 
     if (!user) throw new NotFoundException('User not found');
     if (!product) throw new NotFoundException('Product not found');

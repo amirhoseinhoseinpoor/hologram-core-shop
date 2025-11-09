@@ -2,21 +2,26 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as dotenv from 'dotenv';
+dotenv.config();
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  dotenv.config();
+
   const APP_MODE = process.env.APP_MODE;
-  const APP_PORT = APP_MODE === 'prod' ? process.env.APP_PORT : process.env.APP_DEV_PORT;
+  const APP_PORT =
+    APP_MODE === 'prod' ? process.env.APP_PORT : process.env.APP_DEV_PORT;
   const CORS_HOSTS = process.env.CORS_HOSTS?.split(',') || [];
-  const CORS_PORTS = APP_MODE === 'prod' ? process.env.CORS_PORTS?.split(',') : process.env.CORS_DEV_PORTS?.split(',') || [];
+  const CORS_PORTS =
+    APP_MODE === 'prod'
+      ? process.env.CORS_PORTS?.split(',')
+      : process.env.CORS_DEV_PORTS?.split(',') || [];
 
   const ALLOWED_ORIGINS = [];
-  for (let host of CORS_HOSTS){
+  for (let host of CORS_HOSTS) {
     ALLOWED_ORIGINS.push(`${host}`);
-    for (const port of CORS_PORTS) 
-      ALLOWED_ORIGINS.push(`${host}:${port}`);
+    for (const port of CORS_PORTS) ALLOWED_ORIGINS.push(`${host}:${port}`);
   }
+
 
   app.enableCors({
     origin: ALLOWED_ORIGINS,
