@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersRepository } from './users.repository';
@@ -13,7 +17,7 @@ export class UsersService {
   constructor(
     private repo: UsersRepository,
     private userRoleService: UserRolesService,
-  ) { }
+  ) {}
 
   async asUser(dto: CreateUserDto | UpdateUserDto): Promise<User> {
     const user: User = new User();
@@ -25,25 +29,31 @@ export class UsersService {
     return { ...user } as User;
   }
 
-  async getUserPermissions(code: string): Promise<{ name: string; htmlId: string }[]> {
+  async getUserPermissions(
+    code: string,
+  ): Promise<{ name: string; htmlId: string }[]> {
     // Fetch the user with roles and permissions
-    const user = await this.repo.findOne(
-      { code: code },
-      ['userRoles', 'userRoles.role', 'userRoles.role.permissions', 'userRoles.role.permissions.permission']
-    );
+    const user = await this.repo.findOne({ code: code }, [
+      'userRoles',
+      'userRoles.role',
+      'userRoles.role.permissions',
+      'userRoles.role.permissions.permission',
+    ]);
     if (!user) throw new NotFoundException('User not found');
 
     // Extract permissions with both name and htmlId
-    const permissions = user.userRoles.flatMap(userRole =>
-      userRole.role.permissions.map(rp => ({
+    const permissions = user.userRoles.flatMap((userRole) =>
+      userRole.role.permissions.map((rp) => ({
         name: rp.permission.name,
         htmlId: rp.permission.htmlId, // Assuming the permission entity has an 'htmlId' field
-      }))
+      })),
     );
 
     // Remove duplicates based on both name and htmlId
     const uniquePermissions = permissions.reduce((acc, current) => {
-      if (!acc.some(p => p.name === current.name && p.htmlId === current.htmlId)) {
+      if (
+        !acc.some((p) => p.name === current.name && p.htmlId === current.htmlId)
+      ) {
         acc.push(current);
       }
       return acc;
@@ -67,7 +77,7 @@ export class UsersService {
     const curUser = await this.repo.findOne({ code: code });
     if (!curUser) throw new NotFoundException('User not found');
 
-    // Update fields based on the dto  
+    // Update fields based on the dto
     if (dto.firstName) curUser.firstName = dto.firstName;
     if (dto.lastName) curUser.lastName = dto.lastName;
     if (dto.username) curUser.username = dto.username;
@@ -75,9 +85,9 @@ export class UsersService {
     if (dto.gender) curUser.gender = dto.gender;
     if (dto.domain) curUser.domain = dto.domain;
     if (dto.password) curUser.password = await bcrypt.hash(dto.password, 12);
-    if (typeof dto.active !== 'undefined') curUser.active = dto.active;  
+    if (typeof dto.active !== 'undefined') curUser.active = dto.active;
 
-    // Checking for roleIds to update roles if provided  
+    // Checking for roleIds to update roles if provided
     if (Array.isArray(dto.roleIds)) {
       await this.userRoleService.exists(dto.roleIds);
       curUser.userRoles = await this.userRoleService.update(
@@ -87,13 +97,17 @@ export class UsersService {
       );
     }
 
-    // Update the user in the repository  
+    // Update the user in the repository
     await this.repo.createOrUpdate(curUser);
     return OK;
   }
 
   async findOneByUsername(username: string) {
-    return await this.repo.findOne({ username: username });
+    return await this.repo.findOne({
+      deleted: false,
+      active: true,
+      username: username,
+    });
   }
 
   async findBy(dto: FindUserDto): Promise<User[]> {
@@ -107,7 +121,14 @@ export class UsersService {
       }
     });
 
-    return await this.repo.findAll(cleanFilters, ['userRoles', 'userRoles.role'], page, limit, sortBy, sortOrder);
+    return await this.repo.findAll(
+      cleanFilters,
+      ['userRoles', 'userRoles.role'],
+      page,
+      limit,
+      sortBy,
+      sortOrder,
+    );
   }
 
   async remove(code: string) {

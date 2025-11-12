@@ -23,6 +23,7 @@ export class AuthService {
     }
 
     const user = await this.userService.findOneByUsername(username);
+    
     if (!(user?.password && (await bcrypt.compare(pass, user.password)))) {
       // Increment failed login attempts on failure
       this.failedLoginAttempts[username] = (this.failedLoginAttempts[username] || 0) + 1;
@@ -76,6 +77,7 @@ export class AuthService {
     // Assign domain and role to the user DTO
     const newUserDto = {
       ...dto,
+      active: true,
       domain,
       roleIds,
     };
