@@ -5,10 +5,10 @@ import { UserProduct } from './user-product.entity';
 
 @Entity('Products')
 export class Product extends BaseRetailEntity {
-  @Column({ type: 'varchar', length: 10, nullable: false, unique: true })
+  @Column({ type: 'varchar', length: 10, nullable: false})
   code: string;
 
-  @Column({ type : 'varchar' , nullable : true , unique : true})
+  @Column({ type : 'varchar' , nullable : true})
   navId: number;
 
   @Column({ type: 'varchar', length: 150, nullable: false })
