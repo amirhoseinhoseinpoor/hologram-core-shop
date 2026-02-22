@@ -23,6 +23,7 @@ import { GateWaysModule } from './modules/gateways/gateways.module';
 import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { RolesPermissionModule } from './modules/roles-permission/roles-permission.module';
 import { PermissionModule } from './modules/permission/permission.module';
+import { ContactModule } from './modules/contact/contact.module';
 
 @Module({
   imports: [
@@ -59,6 +60,7 @@ import { PermissionModule } from './modules/permission/permission.module';
     AnalyticsModule,
     RolesPermissionModule,
     PermissionModule,
+    ContactModule,
   ],
   controllers: [AppController],
   providers: [
