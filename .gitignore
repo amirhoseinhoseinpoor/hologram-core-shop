@@ -3,6 +3,9 @@
 /node_modules
 /build
 
+# uploaded files — never commit these to git
+/uploads
+
 # Logs
 logs
 *.log
