@@ -26,4 +26,11 @@ export class MediaRepository extends BaseRepository {
     const files = await this.findAll(isPublic, where);
     return files?.length === 1 ? files[0] : null;
   }
+
+  // Finds a single active file by fileName regardless of public/private status.
+  // Used when we need to operate on a file without knowing its visibility (e.g. delete).
+  async findByFileName(fileName: string): Promise<Media | null> {
+    const files = await this.find(Media, { fileName, active: true });
+    return files?.length > 0 ? files[0] : null;
+  }
 }

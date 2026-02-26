@@ -1,13 +1,11 @@
 import {
-  BadRequestException,
   Injectable,
-  NotFoundException,
   StreamableFile,
 } from '@nestjs/common';
 import { MediaRepository } from './media.repository';
 import { MediaDto } from './dto/media-dto';
 import { Media } from 'src/core/db/entities/media.entity';
-import { createReadStream, readFileSync } from 'fs';
+import { createReadStream, existsSync, unlinkSync } from 'fs';
 import { join } from 'path';
 import { NOT_OK, OK } from 'src/core/misc/consts';
 import { MediaTypeDto } from './dto/media-type.dto';
@@ -15,6 +13,17 @@ import { MediaTypeDto } from './dto/media-type.dto';
 @Injectable()
 export class SystemService {
   constructor(private mediaRepo: MediaRepository) {}
+
+  // Builds the full absolute path to a media file on disk.
+  // Structure: {UPLOAD_LOCATION}/{public|private}/{tag}/{fileName}
+  private getFilePath(media: Media): string {
+    const base = process.env.UPLOAD_LOCATION || './uploads';
+    const visibility = media.isPublic ? 'public' : 'private';
+    const safeTag = media.tag
+      .replace(/[/\\:*?"<>|]/g, '_')
+      .replace(/\s+/g, '_');
+    return join(process.cwd(), base, visibility, safeTag, media.fileName);
+  }
 
   async uploadFiles(info: MediaTypeDto, dto: MediaDto[]) {
     const files = [];
@@ -35,11 +44,19 @@ export class SystemService {
   }
 
   async removeFile(fileName: string) {
-    const res = await this.mediaRepo.findOne(false, { fileName: fileName });
+    const res = await this.mediaRepo.findByFileName(fileName);
     if (!res) return NOT_OK;
     res.active = false;
     try {
       await this.mediaRepo.createOrUpdate([res]);
+      // Public files are hard-deleted from disk to free storage.
+      // Private files (orders, documents) are kept for audit/legal purposes.
+      if (res.isPublic) {
+        const filePath = this.getFilePath(res);
+        if (existsSync(filePath)) {
+          unlinkSync(filePath);
+        }
+      }
       return OK;
     } catch (e) {
       return NOT_OK;
@@ -61,17 +78,12 @@ export class SystemService {
     if (!file) return 'File not found';
 
     try {
-      const filePath = join(
-        process.cwd(),
-        process.env.UPLOAD_LOCATION,
-        filename,
-      );
+      const filePath = this.getFilePath(file);
       const fileStream = createReadStream(filePath);
 
-      // Add error handling for the file stream
       fileStream.on('error', (err) => {
         console.error('Stream error:', err);
-        fileStream.destroy(); // Ensure the stream is closed on error
+        fileStream.destroy();
       });
       return new StreamableFile(fileStream);
     } catch (e) {
@@ -94,17 +106,12 @@ export class SystemService {
     if (!file) return 'File not found';
 
     try {
-      const filePath = join(
-        process.cwd(),
-        process.env.UPLOAD_LOCATION,
-        filename,
-      );
+      const filePath = this.getFilePath(file);
       const fileStream = createReadStream(filePath);
 
-      // Handle stream errors
       fileStream.on('error', (err) => {
         console.error('Stream error:', err);
-        fileStream.destroy(); // Ensure the stream is closed on error
+        fileStream.destroy();
       });
 
       return new StreamableFile(fileStream);

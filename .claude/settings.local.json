@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node migrate-uploads.js:*)",
+      "Bash(node -e:*)",
+      "Bash(NODE_PATH=\"/c/Users/Amir Hossein/Desktop/file/daliriProject/hologram-core-shop/node_modules\" node:*)",
+      "Bash(node --version:*)",
+      "Bash(pg_restore:*)",
+      "Bash(\"/c/Program Files/PostgreSQL/17/bin/pg_restore\" --version)",
+      "Bash(\"/c/Program Files/PostgreSQL/17/bin/pg_restore\" -l \"/c/Users/Amir Hossein/Desktop/backUpDaliriNNN.sql\")",
+      "Bash(where:*)",
+      "Bash(node generate-migration.js:*)"
+    ]
+  }
+}
