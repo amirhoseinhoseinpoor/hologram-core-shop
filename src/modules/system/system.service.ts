@@ -74,7 +74,7 @@ export class SystemService {
   }
 
   async getFile(filename: string): Promise<StreamableFile | string> {
-    const file = await this.mediaRepo.findOne(false, { fileName: filename });
+    const file = await this.mediaRepo.findOneFlexible(false, filename);
     if (!file) return 'File not found';
 
     try {
@@ -102,7 +102,7 @@ export class SystemService {
   }
 
   async getPublicFile(filename: string): Promise<StreamableFile | string> {
-    const file = await this.mediaRepo.findOne(true, { fileName: filename });
+    const file = await this.mediaRepo.findOneFlexible(true, filename);
     if (!file) return 'File not found';
 
     try {

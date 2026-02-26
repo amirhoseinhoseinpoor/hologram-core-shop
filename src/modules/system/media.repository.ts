@@ -2,7 +2,7 @@ import { Inject, Injectable, Scope } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import { BaseRepository } from 'src/core/db/base.repository';
-import { DataSource } from 'typeorm';
+import { DataSource, Like } from 'typeorm';
 import { User } from 'src/core/db/entities/user.entity';
 import { Media } from 'src/core/db/entities/media.entity';
 
@@ -28,9 +28,32 @@ export class MediaRepository extends BaseRepository {
   }
 
   // Finds a single active file by fileName regardless of public/private status.
-  // Used when we need to operate on a file without knowing its visibility (e.g. delete).
+  // Tries exact match first; falls back to LIKE 'uuid.%' to handle legacy
+  // references that were stored without a file extension.
   async findByFileName(fileName: string): Promise<Media | null> {
-    const files = await this.find(Media, { fileName, active: true });
-    return files?.length > 0 ? files[0] : null;
+    const exact = await this.find(Media, { fileName, active: true });
+    if (exact?.length > 0) return exact[0];
+
+    const fuzzy = await this.getRepository(Media).find({
+      where: { fileName: Like(`${fileName}.%`), active: true },
+    });
+    return fuzzy?.length > 0 ? fuzzy[0] : null;
+  }
+
+  // Like findOne() but resolves UUID-only filenames (legacy) to their UUID.ext
+  // counterpart in the DB, preserving the isPublic + createdBy access checks.
+  async findOneFlexible(isPublic: boolean, rawFileName: string): Promise<Media | null> {
+    const base: any = { active: true, isPublic };
+    if (!isPublic) base.createdBy = this.getUserInfo().id;
+
+    // 1. Exact match (new uploads that already have an extension)
+    const exact = await this.find(Media, { ...base, fileName: rawFileName });
+    if (exact?.length > 0) return exact[0];
+
+    // 2. LIKE fallback: 'uuid' → matches 'uuid.png', 'uuid.mp4', etc.
+    const fuzzy = await this.getRepository(Media).find({
+      where: { ...base, fileName: Like(`${rawFileName}.%`) },
+    });
+    return fuzzy?.length > 0 ? fuzzy[0] : null;
   }
 }
