@@ -9,7 +9,11 @@
       "Bash(\"/c/Program Files/PostgreSQL/17/bin/pg_restore\" --version)",
       "Bash(\"/c/Program Files/PostgreSQL/17/bin/pg_restore\" -l \"/c/Users/Amir Hossein/Desktop/backUpDaliriNNN.sql\")",
       "Bash(where:*)",
-      "Bash(node generate-migration.js:*)"
+      "Bash(node generate-migration.js:*)",
+      "Bash(git rm:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ]
   }
 }
