@@ -10,9 +10,10 @@ import { join } from 'path';
 import { NOT_OK, OK } from 'src/core/misc/consts';
 import { MediaTypeDto } from './dto/media-type.dto';
 
+
 @Injectable()
 export class SystemService {
-  constructor(private mediaRepo: MediaRepository) {}
+  constructor(private mediaRepo: MediaRepository) { }
 
   // Builds the full absolute path to a media file on disk.
   // Structure: {UPLOAD_LOCATION}/{public|private}/{tag}/{fileName}
@@ -44,24 +45,53 @@ export class SystemService {
   }
 
   async removeFile(fileName: string) {
-    const res = await this.mediaRepo.findByFileName(fileName);
-    if (!res) return NOT_OK;
-    res.active = false;
+    console.log(`=== SystemService.removeFile called for: ${fileName} ===`);
+
+    const media = await this.mediaRepo.findByFileName(fileName);
+    if (!media) {
+      console.log(`File not found in database: ${fileName}`);
+      return { success: false, message: 'File not found in database', ok: NOT_OK };
+    }
+
+    console.log(`Media found:`, {
+      id: media.id,
+      fileName: media.fileName,
+      isPublic: media.isPublic,
+      active: media.active,
+      tag: media.tag
+    });
+
     try {
-      await this.mediaRepo.createOrUpdate([res]);
-      // Public files are hard-deleted from disk to free storage.
-      // Private files (orders, documents) are kept for audit/legal purposes.
-      if (res.isPublic) {
-        const filePath = this.getFilePath(res);
+      // Update database first
+      console.log('Marking media as inactive in database...');
+      media.active = false;
+      await this.mediaRepo.createOrUpdate([media]);
+      console.log('Media marked as inactive successfully');
+
+      // Delete physical file if public
+      if (media.isPublic) {
+        const filePath = this.getFilePath(media);
+        console.log(`Physical file path: ${filePath}`);
+
         if (existsSync(filePath)) {
+          // Use unlinkSync to make sure it completes before returning
           unlinkSync(filePath);
+          console.log(`✓ Physical file deleted successfully: ${filePath}`);
+        } else {
+          console.log(`⚠ Physical file not found on disk: ${filePath}`);
         }
+      } else {
+        console.log('Private file - keeping on disk');
       }
-      return OK;
-    } catch (e) {
-      return NOT_OK;
+
+      console.log(`✓ File ${fileName} processed successfully`);
+      return { success: true, message: 'File deleted', ok: OK };
+    } catch (error) {
+      console.error(`✗ Error deleting file ${fileName}:`, error);
+      return { success: false, message: error.message, ok: NOT_OK };
     }
   }
+
 
   async getFiles(tag: string) {
     const files = await this.mediaRepo.findAll(false, { tag: tag });

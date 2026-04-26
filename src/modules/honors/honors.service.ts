@@ -4,14 +4,21 @@ import { CreateHonorDto } from './dto/create-honor.dto';
 import { OK, genUID } from 'src/core/misc/consts';
 import { HonorsRepository } from './honors.repository';
 import { UpdateHonorDto } from './dto/update-honor.dto';
+import { MediaCleanupService } from '../system/media-cleanup.service';
+import { BaseMediaEntityService } from '../base/base-media-entity.service';
 
 @Injectable()
-export class HonorsService {
-  constructor(private repo: HonorsRepository) {}
+export class HonorsService extends BaseMediaEntityService<Honors> {
+  constructor(
+    private honorsRepo: HonorsRepository,
+    mediaCleanup: MediaCleanupService,
+  ) {
+    super(honorsRepo, mediaCleanup); // Call parent constructor
+  }
 
   async create(dto: CreateHonorDto) {
     let code = genUID();
-    await this.repo.createOrUpdate({
+    await this.honorsRepo.createOrUpdate({
       ...dto,
       code: code,
       active: true,
@@ -21,7 +28,7 @@ export class HonorsService {
   }
 
   async findOne(code: string) {
-    const honor = await this.repo.findOne({ code: code });
+    const honor = await this.honorsRepo.findOne({ code: code });
     if (!honor) throw new NotFoundException(`Honor not found`);
     return {
       code: honor.code,
@@ -31,7 +38,7 @@ export class HonorsService {
   }
 
   async findAll() {
-    const honors = await this.repo.findAll();
+    const honors = await this.honorsRepo.findAll();
     if (!honors?.length) return [];
     return honors.map((honor) => {
       return {
@@ -45,11 +52,15 @@ export class HonorsService {
     });
   }
 
+
   async update(code: string, dto: UpdateHonorDto) {
-    const honor = await this.repo.findOne({ code: code });
-    if (!honor) throw new NotFoundException(`Honor not found`);
-    Object.assign(honor, dto);
-    await this.repo.createOrUpdate({ ...honor, code: code } as Honors);
-    return OK;
+    // Use the base service method for update with media cleanup
+    return this.updateWithMedia(code, dto, 'src', dto);
+  }
+
+  // You can remove your custom delete method and use the base one
+  // Or override it if you need custom logic:
+  async delete(code: string) {
+    return this.deleteWithMedia(code, 'src');
   }
 }

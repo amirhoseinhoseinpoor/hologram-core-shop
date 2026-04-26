@@ -19,13 +19,13 @@ export class ExhibitionController {
   constructor(private readonly exhibitionService: ExhibitionService) {}
 
   @Post()
-  // @Provider()
+  @Provider()
   create(@Body() dto: CreateExhibitionDto) {
     return this.exhibitionService.create(dto);
   }
 
   @Patch(':code')
-  // @Provider()
+  @Provider()
   update(@Param('code') code: string, @Body() dto: UpdateExhibitionDto) {
     return this.exhibitionService.update(code, dto);
   }
@@ -37,10 +37,8 @@ export class ExhibitionController {
   }
 
   @Delete(':code')
-  // @Provider()
-  deleteOne(@Param('code') code: string) {
-    return this.exhibitionService.update(code, {
-      deleted: true,
-    } as UpdateExhibitionDto);
+  @Provider()
+  async deleteOne(@Param('code') code: string) {
+    return this.exhibitionService.delete(code);
   }
 }

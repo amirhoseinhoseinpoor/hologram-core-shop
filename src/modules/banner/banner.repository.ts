@@ -19,8 +19,23 @@ export class BannerRepository extends BaseRepository {
     return await this.find(Banner, { ...where, deleted: false });
   }
 
-  async findOne(where: {}) {
-    const banner = await this.findAll(where);
-    return banner?.length === 1 ? banner[0] : null;
+  // In your banner.repository.ts
+  async findOne(where: {}, includeDeleted: boolean = false) {
+
+    const queryBuilder = this.getRepository(Banner).createQueryBuilder('banner');
+
+    // Add where conditions
+    Object.keys(where).forEach(key => {
+      queryBuilder.andWhere(`banner.${key} = :${key}`, { [key]: where[key] });
+    });
+
+    // Only filter deleted if includeDeleted is false
+    if (!includeDeleted) {
+      queryBuilder.andWhere('banner.deleted = :deleted', { deleted: false });
+    }
+
+    const result = await queryBuilder.getOne();
+
+    return result;
   }
 }

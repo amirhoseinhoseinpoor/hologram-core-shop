@@ -18,13 +18,13 @@ export class HonorsController {
   constructor(private readonly honorsService: HonorsService) {}
 
   @Post()
-  // @Provider()
+  @Provider()
   create(@Body() dto: CreateHonorDto) {
     return this.honorsService.create(dto);
   }
 
   @Patch(':code')
-  // @Provider()
+  @Provider()
   update(@Param('code') code: string, @Body() dto: UpdateHonorDto) {
     return this.honorsService.update(code, dto);
   }
@@ -36,10 +36,8 @@ export class HonorsController {
   }
 
   @Delete(':code')
-  // @Provider()
+  @Provider()
   deleteOne(@Param('code') code: string) {
-    return this.honorsService.update(code, {
-      deleted: true,
-    } as UpdateHonorDto);
+    return this.honorsService.delete(code);
   }
 }

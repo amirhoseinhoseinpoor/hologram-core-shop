@@ -23,8 +23,24 @@ export class BlogsRepository extends BaseRepository {
     return await this.getRepository(Blogs).findAndCount(options);
   }
 
-  async findOne(where: {}) {
-    const blogs = await this.findAll(where);
-    return blogs?.length === 1 ? blogs[0] : null;
+
+  // In your banner.repository.ts
+  async findOne(where: {}, includeDeleted: boolean = false) {
+
+    const queryBuilder = this.getRepository(Blogs).createQueryBuilder('blogs');
+
+    // Add where conditions
+    Object.keys(where).forEach(key => {
+      queryBuilder.andWhere(`blogs.${key} = :${key}`, { [key]: where[key] });
+    });
+
+    // Only filter deleted if includeDeleted is false
+    if (!includeDeleted) {
+      queryBuilder.andWhere('blogs.deleted = :deleted', { deleted: false });
+    }
+
+    const result = await queryBuilder.getOne();
+
+    return result;
   }
 }

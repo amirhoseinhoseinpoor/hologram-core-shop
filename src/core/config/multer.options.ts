@@ -1,3 +1,4 @@
+// multer.options.ts
 import { extname, join } from 'path';
 import { existsSync, mkdirSync } from 'fs';
 import { diskStorage } from 'multer';
@@ -22,15 +23,20 @@ export const multerOptions = {
   },
   storage: diskStorage({
     destination: (req: any, file: any, cb: any) => {
+      // At this point, req.body should be populated if fields were sent BEFORE files
+      // The order in FormData matters: fields MUST come before files
+      
       const base = process.env.UPLOAD_LOCATION || './uploads';
-      const isPublic =
-        req.body?.isPublic === 'true' || req.body?.isPublic === true;
+      
+      // Log to debug
+      console.log('Destination - req.body:', req.body);
+      
+      const isPublic = req.body?.isPublic === 'true' || req.body?.isPublic === true;
       const rawTag = req.body?.tag || 'misc';
-      // Sanitize tag: remove path-unsafe chars, replace spaces with underscore.
-      // Unicode characters (e.g. Persian) are intentionally kept.
       const tag = rawTag.replace(/[/\\:*?"<>|]/g, '_').replace(/\s+/g, '_');
       const visibility = isPublic ? 'public' : 'private';
       const uploadPath = join(base, visibility, tag);
+      
       if (!existsSync(uploadPath)) {
         mkdirSync(uploadPath, { recursive: true });
       }

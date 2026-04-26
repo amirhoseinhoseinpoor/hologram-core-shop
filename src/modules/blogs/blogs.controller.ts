@@ -44,10 +44,8 @@ export class BlogsController {
   }
 
   @Delete(':code')
-  // @Provider()
+  @Provider()
   deleteOne(@Param('code') code: string) {
-    return this.blogsService.update(code, {
-      deleted: true,
-    } as UpdateBlogDto);
+    return this.blogsService.delete(code);
   }
 }

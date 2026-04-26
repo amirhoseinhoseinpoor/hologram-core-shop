@@ -63,11 +63,10 @@ export class ProductController {
 
   @Delete(':code')
   @Provider()
-  deleteOne(@Param('code') code: string) {
-    return this.productService.update(code, {
-      deleted: true,
-    } as UpdateProductDto);
+  async deleteOne(@Param('code') code: string) {
+    return this.productService.delete(code); // Call delete, not update
   }
+
 
 
   @Post(':code/like')

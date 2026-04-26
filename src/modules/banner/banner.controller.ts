@@ -15,7 +15,7 @@ import { UpdateBannerDto } from './dto/update-banner.dto';
 
 @Controller('banner')
 export class BannerController {
-  constructor(private readonly bannerService: BannerService) {}
+  constructor(private readonly bannerService: BannerService) { }
 
   @Post()
   @Provider()
@@ -37,9 +37,7 @@ export class BannerController {
 
   @Delete(':code')
   @Provider()
-  deleteOne(@Param('code') code: string) {
-    return this.bannerService.update(code, {
-      deleted: true,
-    } as UpdateBannerDto);
+  async deleteOne(@Param('code') code: string) {
+    return this.bannerService.delete(code);
   }
 }

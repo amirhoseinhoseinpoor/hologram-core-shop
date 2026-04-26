@@ -5,13 +5,19 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from 'src/core/db/entities/product.entity';
 import { ProductRepository } from './product.repository';
 import { OK, genUID } from 'src/core/misc/consts';
+import { MediaCleanupService } from '../system/media-cleanup.service';
+import { ProductMediaHelper } from './product-media.helper';
 
 @Injectable()
 export class ProductService {
-  constructor(
+
+    constructor(
     private repo: ProductRepository,
     private userRepo: UsersRepository,
+    private mediaCleanup: MediaCleanupService,
+    private productMediaHelper: ProductMediaHelper,
   ) { }
+
 
   async create(dto: CreateProductDto) {
     let code = genUID();
@@ -70,11 +76,64 @@ export class ProductService {
   }
 
   async update(code: string, dto: UpdateProductDto) {
-    const product = await this.repo.findOne(code);
-    if (!product) throw new NotFoundException(`Product not found`);
-    Object.assign(product, dto);
-    await this.repo.createOrUpdate({ ...product, code: code } as Product);
+    console.log(`=== Updating Product: ${code} ===`);
+    
+    // Get existing product (include deleted to check)
+    const existingProduct = await this.repo.findOne(code, true);
+    if (!existingProduct) throw new NotFoundException(`Product not found`);
+    
+    // Check for deleted media files
+    const hasInfoChanged = dto.info && JSON.stringify(dto.info) !== JSON.stringify(existingProduct.info);
+    const hasMediaChanged = dto.media && JSON.stringify(dto.media) !== JSON.stringify(existingProduct.media);
+    
+    if (hasInfoChanged || hasMediaChanged) {
+      console.log('Product content changed, checking for files to delete...');
+      
+      const deletedFiles = this.productMediaHelper.findDeletedFiles(
+        existingProduct.info,
+        existingProduct.media,
+        dto.info || existingProduct.info,
+        dto.media || existingProduct.media
+      );
+      
+      if (deletedFiles.length > 0) {
+        await this.mediaCleanup.deleteMultipleMedia(deletedFiles);
+      }
+    }
+    
+    // Update the product
+    Object.assign(existingProduct, dto);
+    await this.repo.createOrUpdate(existingProduct);
+    
     return OK;
+  }
+
+  async delete(code: string) {
+    console.log(`=== Deleting Product: ${code} ===`);
+    
+    // Get the product
+    const product = await this.repo.findOne(code, true);
+    if (!product) throw new NotFoundException(`Product not found`);
+    
+    // Delete all media files
+    let deletedCount = 0;
+    if (product.info || product.media) {
+      console.log('Extracting media files from product...');
+      const result = await this.productMediaHelper.deleteAllProductMedia(
+        product.info,
+        product.media
+      );
+      deletedCount = result.deleted;
+      console.log(`Deleted ${deletedCount} media files`);
+    }
+    
+    // Soft delete the product
+    product.deleted = true;
+    await this.repo.createOrUpdate(product);
+    
+    console.log(`Product ${code} soft deleted successfully`);
+    
+    return { message: 'Deleted successfully', mediaDeleted: deletedCount };
   }
 
   async countNonDeletedProducts() {

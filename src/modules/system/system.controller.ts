@@ -7,7 +7,9 @@ import {
   Post,
   UploadedFiles,
   UseInterceptors,
+  Req,
 } from '@nestjs/common';
+import { Request } from 'express';
 import { SystemService } from './system.service';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { multerOptions } from 'src/core/config/multer.options';
@@ -17,14 +19,23 @@ import { Public } from 'src/core/decorator/public.decorator';
 
 @Controller('system')
 export class SystemController {
-  constructor(private readonly sysService: SystemService) {}
+  constructor(private readonly sysService: SystemService) { }
 
   @Post('upload')
   @UseInterceptors(FilesInterceptor('files', 20, multerOptions))
   uploadFile(
-    @Body() info: MediaTypeDto,
+    @Req() req: Request,
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
+    // Extract from req.body (multer populates this)
+    const info: MediaTypeDto = {
+      tag: req.body?.tag || 'misc',
+      type: parseInt(req.body?.type) || 1,
+      isPublic: req.body?.isPublic === 'true' || req.body?.isPublic === true,
+    };
+
+    console.log('Upload info:', info);
+    
     const dto = files.map(
       (f) =>
         ({ originalName: f.originalname, fileName: f.filename }) as MediaDto,

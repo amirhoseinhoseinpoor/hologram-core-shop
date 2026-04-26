@@ -19,8 +19,23 @@ export class ExhibitionRepository extends BaseRepository {
     return await this.find(Exhibition, { ...where, deleted: false });
   }
 
-  async findOne(where: {}) {
-    const products = await this.findAll(where);
-    return products?.length === 1 ? products[0] : null;
+  async findOne(where: {}, includeDeleted: boolean = false) {
+
+    const queryBuilder = this.getRepository(Exhibition).createQueryBuilder('exhibition');
+
+
+    // Add where conditions
+    Object.keys(where).forEach(key => {
+      queryBuilder.andWhere(`exhibition.${key} = :${key}`, { [key]: where[key] });
+    });
+
+    // Only filter deleted if includeDeleted is false
+    if (!includeDeleted) {
+      queryBuilder.andWhere('exhibition.deleted = :deleted', { deleted: false });
+    }
+
+    const result = await queryBuilder.getOne();
+
+    return result;
   }
 }

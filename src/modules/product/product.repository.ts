@@ -31,9 +31,12 @@ export class ProductRepository extends BaseRepository {
   //   return products?.length === 1 ? products[0] : null;
   // }
 
-  async findOne(code: string): Promise<Product | null> {
+  // In your product.repository.ts
+  async findOne(code: string, includeDeleted: boolean = false): Promise<Product | null> {
     const repo = this.getRepository(Product);
-    return await repo.findOne({ where: { code, deleted: false } });
+    return await repo.findOne({
+      where: includeDeleted ? { code } : { code, deleted: false }
+    });
   }
 
   async findAndCount(options?: any) {

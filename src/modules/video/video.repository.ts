@@ -19,8 +19,23 @@ export class VideoRepository extends BaseRepository {
     return await this.find(Video, { ...where, deleted: false });
   }
 
-  async findOne(where: {}) {
-    const products = await this.findAll(where);
-    return products?.length === 1 ? products[0] : null;
+  // In your video.repository.ts
+  async findOne(where: {}, includeDeleted: boolean = false) {
+
+    const queryBuilder = this.getRepository(Video).createQueryBuilder('video');
+
+    // Add where conditions
+    Object.keys(where).forEach(key => {
+      queryBuilder.andWhere(`video.${key} = :${key}`, { [key]: where[key] });
+    });
+
+    // Only filter deleted if includeDeleted is false
+    if (!includeDeleted) {
+      queryBuilder.andWhere('video.deleted = :deleted', { deleted: false });
+    }
+
+    const result = await queryBuilder.getOne();
+
+    return result;
   }
 }
