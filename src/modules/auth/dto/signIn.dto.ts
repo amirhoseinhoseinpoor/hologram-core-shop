@@ -10,6 +10,10 @@ export class SignInDto {
   @ApiProperty()
   @IsNotEmpty()
   password: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  otp: string;
   
   @ApiProperty()
   captchaResponse?: string;

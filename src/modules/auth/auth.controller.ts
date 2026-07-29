@@ -6,6 +6,9 @@ import { SignInDto } from './dto/signIn.dto';
 import { Public } from 'src/core/decorator/public.decorator';
 import { BadRequestException } from '@nestjs/common';
 import { Provider } from 'src/core/decorator/provider.decorator';
+import { SendOtpDto } from './dto/sendOtp.dto';
+import { SignInOtpDto } from './dto/signInOtp.dto';
+import { RegisterDto } from './dto/register.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -14,9 +17,13 @@ export class AuthController {
   @Public()
   @UseInterceptors(TransactionInterceptor)
   @Post('register')
-  async signUp(@Body() dto: CreateUserDto) {
-    return await this.authService.signUp(dto, 1, [3]); // domain=1, role=3
+  async signUp(@Body() dto: RegisterDto) {
+    return await this.authService.signUpWithOtp(dto);
   }
+  // @Post('register')
+  // async signUp(@Body() dto: CreateUserDto) {
+  //   return await this.authService.signUp(dto, 1, [3]); // domain=1, role=3
+  // }
 
   @Public()
   @Post('login')
@@ -25,8 +32,20 @@ export class AuthController {
       signInDto.username,
       signInDto.password,
       signInDto.captchaResponse,
-      false
+      false,
     );
+  }
+
+  @Public()
+  @Post('send-otp')
+  async sendOtp(@Body() dto: SendOtpDto) {
+    return this.authService.sendOtp(dto.username, dto.type);
+  }
+
+  @Public()
+  @Post('login-otp')
+  signInOtp(@Body() dto: SignInOtpDto) {
+    return this.authService.signInOtp(dto.username, dto.otp);
   }
 
   @Public()
@@ -45,8 +64,10 @@ export class AuthController {
   @Post('createUserByAdmin')
   async createUserByAdmin(@Body() dto: CreateUserDto) {
     if (!dto.domain) {
-      throw new BadRequestException('Domain and roleIds are required for admin user creation.');
+      throw new BadRequestException(
+        'Domain and roleIds are required for admin user creation.',
+      );
     }
-    return await this.authService.signUp(dto, dto.domain, dto.roleIds); 
+    return await this.authService.signUp(dto, dto.domain, dto.roleIds);
   }
 }
