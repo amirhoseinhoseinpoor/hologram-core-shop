@@ -4,27 +4,29 @@ import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { UsersService } from '../users/users.service';
 import { RegisterDto } from './dto/register.dto';
+import { OtpService } from '../otp/otp.service';
 import axios from 'axios';
 
 @Injectable()
 export class AuthService {
   private failedLoginAttempts: { [key: string]: number } = {};
 
-  private otpStore: {
-    [username: string]: {
-      code: string;
-      expiresAt: number;
-    };
-  } = {};
+  // private otpStore: {
+  //   [username: string]: {
+  //     code: string;
+  //     expiresAt: number;
+  //   };
+  // } = {};
 
-  private otpCooldown: {
-    [username: string]: number;
-  } = {};
+  // private otpCooldown: {
+  //   [username: string]: number;
+  // } = {};
 
   constructor(
     private userService: UsersService,
     private jwtService: JwtService,
-  ) {}
+    private otpService: OtpService,
+  ) { }
 
   async signIn(
     username: string,
@@ -110,58 +112,46 @@ export class AuthService {
     return await this.userService.create(newUserDto);
   }
 
-  private generateOtp(): string {
-    return Math.floor(100000 + Math.random() * 900000).toString();
-  }
+  // private generateOtp(): string {
+  //   return Math.floor(100000 + Math.random() * 900000).toString();
+  // }
 
   async sendOtp(username: string, type: 'login' | 'register') {
     const user = await this.userService.findOneByUsername(username);
 
     if (type === 'login') {
       if (!user) {
-        throw new BadRequestException('User not found.');
+        throw new BadRequestException('کاربر یافت نشد');
       }
     }
 
     if (type === 'register') {
       if (user) {
-        throw new BadRequestException('Phone number already exists.');
+        throw new BadRequestException('کاربری با این شماره همراه وجود دارد');
       }
     }
 
-    // Prevent requesting another OTP for 60 seconds
-    const cooldown = this.otpCooldown[username];
-
-    if (cooldown && cooldown > Date.now()) {
-      throw new BadRequestException(
-        'Please wait before requesting another OTP.',
-      );
-    }
-
-    const otp = this.generateOtp();
-
-    this.otpStore[username] = {
-      code: otp,
-      expiresAt: Date.now() + 8 * 60 * 1000,
-    };
-
-    this.otpCooldown[username] = Date.now() + 60 * 1000;
+    const otp = await this.otpService.createOtp(username, type);
 
     await this.sendOtpSms(username, otp);
 
     return {
-      message: 'OTP sent successfully.',
+      message: 'رمز یکبار مصرف با موفقیت ارسال شد',
     };
   }
 
   async signUpWithOtp(dto: RegisterDto) {
-    const validOtp = await this.verifyOtp(dto.username, dto.otp);
+    const validOtp = await this.otpService.verifyOtp(
+      dto.username,
+      dto.otp,
+      'register',
+    );
 
     if (!validOtp) {
-      throw new BadRequestException('Invalid OTP');
+      throw new BadRequestException('رمز یکبار مصرف اشتباه است');
     }
 
-    await this.signUp(dto, 1, [3]);
+    await this.signUp(dto, 1, [1]);
 
     const user = await this.userService.findOneByUsername(dto.username);
 
@@ -191,7 +181,11 @@ export class AuthService {
       throw new BadRequestException('Invalid Login');
     }
 
-    const validOtp = await this.verifyOtp(username, otp);
+    const validOtp = await this.otpService.verifyOtp(
+      username,
+      otp,
+      'login',
+    );
 
     if (!validOtp) {
       throw new BadRequestException('Invalid OTP');
@@ -215,28 +209,9 @@ export class AuthService {
       token: await this.jwtService.signAsync(payload),
     };
   }
-  private async verifyOtp(username: string, otp: string): Promise<boolean> {
-    const storedOtp = this.otpStore[username];
 
-    if (!storedOtp) {
-      return false;
-    }
 
-    if (storedOtp.expiresAt < Date.now()) {
-      delete this.otpStore[username];
-      delete this.otpCooldown[username];
-      return false;
-    }
 
-    if (storedOtp.code !== otp) {
-      return false;
-    }
-
-    delete this.otpStore[username];
-    delete this.otpCooldown[username];
-
-    return true;
-  }
 
   // helper for sending otp
   private async sendOtpSms(phone: string, otp: string): Promise<void> {
@@ -262,7 +237,6 @@ export class AuthService {
         },
       );
     } catch (error) {
-      console.error(error.response?.data || error.message);
 
       throw new BadRequestException('Failed to send OTP.');
     }
