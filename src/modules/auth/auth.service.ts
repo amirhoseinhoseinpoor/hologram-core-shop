@@ -26,7 +26,7 @@ export class AuthService {
     private userService: UsersService,
     private jwtService: JwtService,
     private otpService: OtpService,
-  ) { }
+  ) {}
 
   async signIn(
     username: string,
@@ -174,18 +174,58 @@ export class AuthService {
     };
   }
 
-  async signInOtp(username: string, otp: string): Promise<any> {
+  // async signInOtp(username: string, otp: string): Promise<any> {
+  //   const user = await this.userService.findOneByUsername(username);
+
+  //   if (!user) {
+  //     throw new BadRequestException('Invalid Login');
+  //   }
+
+  //   const validOtp = await this.otpService.verifyOtp(
+  //     username,
+  //     otp,
+  //     'login',
+  //   );
+
+  //   if (!validOtp) {
+  //     throw new BadRequestException('Invalid OTP');
+  //   }
+
+  //   const roles = user.userRoles?.map((r) => ({
+  //     id: r.role?.id,
+  //     name: r.role?.name,
+  //   }));
+
+  //   const payload = {
+  //     id: user.id,
+  //     username: user.username,
+  //     domain: user.domain,
+  //     roles,
+  //   };
+
+  //   return {
+  //     firstName: user.firstName,
+  //     lastName: user.lastName,
+  //     token: await this.jwtService.signAsync(payload),
+  //   };
+  // }
+
+  async signInOtp(
+    username: string,
+    otp: string,
+    isAdmin: boolean = false,
+  ): Promise<any> {
     const user = await this.userService.findOneByUsername(username);
 
     if (!user) {
       throw new BadRequestException('Invalid Login');
     }
 
-    const validOtp = await this.otpService.verifyOtp(
-      username,
-      otp,
-      'login',
-    );
+    if (isAdmin && user.domain !== 2) {
+      throw new BadRequestException('Unauthorized user domain.');
+    }
+
+    const validOtp = await this.otpService.verifyOtp(username, otp, 'login');
 
     if (!validOtp) {
       throw new BadRequestException('Invalid OTP');
@@ -210,8 +250,42 @@ export class AuthService {
     };
   }
 
+  async adminSignIn(
+    username: string,
+    pass: string,
+    captchaResponse?: string,
+  ): Promise<any> {
+    if (this.failedLoginAttempts[username] >= 3) {
+      if (!captchaResponse || !(await this.validateCaptcha(captchaResponse))) {
+        throw new BadRequestException('Invalid CAPTCHA');
+      }
+    }
 
+    const user = await this.userService.findOneByUsername(username);
 
+    if (!user?.password || !(await bcrypt.compare(pass, user.password))) {
+      this.failedLoginAttempts[username] =
+        (this.failedLoginAttempts[username] || 0) + 1;
+
+      throw new BadRequestException('Invalid Login');
+    }
+
+    if (user.domain !== 2) {
+      throw new BadRequestException('Unauthorized user domain.');
+    }
+
+    this.failedLoginAttempts[username] = 0;
+
+    // Generate and store OTP
+    const otp = await this.otpService.createOtp(username, 'login');
+
+    // Send OTP through SMS.ir
+    await this.sendOtpSms(username, otp);
+
+    return {
+      message: 'OTP sent successfully',
+    };
+  }
 
   // helper for sending otp
   private async sendOtpSms(phone: string, otp: string): Promise<void> {
@@ -237,7 +311,6 @@ export class AuthService {
         },
       );
     } catch (error) {
-
       throw new BadRequestException('Failed to send OTP.');
     }
   }

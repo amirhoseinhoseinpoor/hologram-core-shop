@@ -51,12 +51,17 @@ export class AuthController {
   @Public()
   @Post('adminLogin')
   async adminSignIn(@Body() signInDto: SignInDto) {
-    return this.authService.signIn(
+    return this.authService.adminSignIn(
       signInDto.username,
       signInDto.password,
       signInDto.captchaResponse,
-      true,
     );
+  }
+
+  @Public()
+  @Post('adminLogin-otp')
+  signInAdminOtp(@Body() dto: SignInOtpDto) {
+    return this.authService.signInOtp(dto.username, dto.otp, true);
   }
 
   @Provider()
