@@ -8,6 +8,6 @@ export class SendOtpDto {
   @IsString()
   username: string;
 
-  @IsIn(['login', 'register'])
-  type: 'login' | 'register';
+  @IsIn(['register'])
+  type: 'register';
 }

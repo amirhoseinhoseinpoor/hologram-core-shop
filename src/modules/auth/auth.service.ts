@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { UsersService } from '../users/users.service';
@@ -7,20 +7,11 @@ import { RegisterDto } from './dto/register.dto';
 import { OtpService } from '../otp/otp.service';
 import axios from 'axios';
 
+const MIN_PASSWORD_LENGTH = 4;
+
 @Injectable()
 export class AuthService {
   private failedLoginAttempts: { [key: string]: number } = {};
-
-  // private otpStore: {
-  //   [username: string]: {
-  //     code: string;
-  //     expiresAt: number;
-  //   };
-  // } = {};
-
-  // private otpCooldown: {
-  //   [username: string]: number;
-  // } = {};
 
   constructor(
     private userService: UsersService,
@@ -28,6 +19,8 @@ export class AuthService {
     private otpService: OtpService,
   ) {}
 
+  // First login step (site and admin panel): checks the password and sends the
+  // OTP. A token is only issued by signInOtp, after the OTP is confirmed.
   async signIn(
     username: string,
     pass: string,
@@ -57,22 +50,12 @@ export class AuthService {
     // Reset failed attempts on successful login
     this.failedLoginAttempts[username] = 0;
 
-    const roles = user.userRoles?.map((r) => ({
-      id: r.role?.id,
-      name: r.role?.name,
-    }));
+    const otp = await this.otpService.createOtp(username, 'login');
 
-    const payload = {
-      id: user.id,
-      username: user.username,
-      domain: user.domain,
-      roles: roles,
-    };
+    await this.sendOtpSms(username, otp);
 
     return {
-      firstName: user.firstName,
-      lastName: user.lastName,
-      token: await this.jwtService.signAsync(payload),
+      message: 'OTP sent successfully',
     };
   }
 
@@ -112,26 +95,20 @@ export class AuthService {
     return await this.userService.create(newUserDto);
   }
 
-  // private generateOtp(): string {
-  //   return Math.floor(100000 + Math.random() * 900000).toString();
-  // }
+  // Public OTP request, registration only. Login OTPs are sent by signIn after
+  // the password check; allowing them here would let the password be skipped.
+  async sendOtp(username: string, type: string) {
+    if (type !== 'register') {
+      throw new BadRequestException('Invalid OTP type');
+    }
 
-  async sendOtp(username: string, type: 'login' | 'register') {
     const user = await this.userService.findOneByUsername(username);
 
-    if (type === 'login') {
-      if (!user) {
-        throw new BadRequestException('کاربر یافت نشد');
-      }
+    if (user) {
+      throw new BadRequestException('کاربری با این شماره همراه وجود دارد');
     }
 
-    if (type === 'register') {
-      if (user) {
-        throw new BadRequestException('کاربری با این شماره همراه وجود دارد');
-      }
-    }
-
-    const otp = await this.otpService.createOtp(username, type);
+    const otp = await this.otpService.createOtp(username, 'register');
 
     await this.sendOtpSms(username, otp);
 
@@ -155,60 +132,8 @@ export class AuthService {
 
     const user = await this.userService.findOneByUsername(dto.username);
 
-    const roles = user.userRoles?.map((r) => ({
-      id: r.role?.id,
-      name: r.role?.name,
-    }));
-
-    const payload = {
-      id: user.id,
-      username: user.username,
-      domain: user.domain,
-      roles,
-    };
-
-    return {
-      firstName: user.firstName,
-      lastName: user.lastName,
-      token: await this.jwtService.signAsync(payload),
-    };
+    return this.buildSession(user);
   }
-
-  // async signInOtp(username: string, otp: string): Promise<any> {
-  //   const user = await this.userService.findOneByUsername(username);
-
-  //   if (!user) {
-  //     throw new BadRequestException('Invalid Login');
-  //   }
-
-  //   const validOtp = await this.otpService.verifyOtp(
-  //     username,
-  //     otp,
-  //     'login',
-  //   );
-
-  //   if (!validOtp) {
-  //     throw new BadRequestException('Invalid OTP');
-  //   }
-
-  //   const roles = user.userRoles?.map((r) => ({
-  //     id: r.role?.id,
-  //     name: r.role?.name,
-  //   }));
-
-  //   const payload = {
-  //     id: user.id,
-  //     username: user.username,
-  //     domain: user.domain,
-  //     roles,
-  //   };
-
-  //   return {
-  //     firstName: user.firstName,
-  //     lastName: user.lastName,
-  //     token: await this.jwtService.signAsync(payload),
-  //   };
-  // }
 
   async signInOtp(
     username: string,
@@ -231,6 +156,45 @@ export class AuthService {
       throw new BadRequestException('Invalid OTP');
     }
 
+    return this.buildSession(user, isAdmin);
+  }
+
+  // The answer is the same for unknown numbers, so this can't be used to find
+  // out who has an account.
+  async forgotPassword(username: string) {
+    const user = await this.userService.findOneByUsername(username);
+
+    if (user) {
+      const otp = await this.otpService.createOtp(username, 'reset');
+
+      await this.sendOtpSms(username, otp);
+    }
+
+    return {
+      message: 'رمز یکبار مصرف با موفقیت ارسال شد',
+    };
+  }
+
+  async resetPassword(username: string, otp: string, password: string) {
+    if (!password || password.length < MIN_PASSWORD_LENGTH) {
+      throw new BadRequestException('Invalid password');
+    }
+
+    const validOtp = await this.otpService.verifyOtp(username, otp, 'reset');
+    const user = validOtp
+      ? await this.userService.findOneByUsername(username)
+      : null;
+
+    if (!user) {
+      throw new BadRequestException('Invalid OTP');
+    }
+
+    return this.userService.update(user.code, { password });
+  }
+
+  // Long-lived sessions, so a refresh or a few days away doesn't force a new
+  // password + OTP login.
+  private async buildSession(user: any, isAdmin: boolean = false) {
     const roles = user.userRoles?.map((r) => ({
       id: r.role?.id,
       name: r.role?.name,
@@ -243,47 +207,14 @@ export class AuthService {
       roles,
     };
 
+    const expiresIn = ((isAdmin
+      ? process.env.ADMIN_JWT_EXPIRES_IN
+      : process.env.USER_JWT_EXPIRES_IN) || '7d') as JwtSignOptions['expiresIn'];
+
     return {
       firstName: user.firstName,
       lastName: user.lastName,
-      token: await this.jwtService.signAsync(payload),
-    };
-  }
-
-  async adminSignIn(
-    username: string,
-    pass: string,
-    captchaResponse?: string,
-  ): Promise<any> {
-    if (this.failedLoginAttempts[username] >= 3) {
-      if (!captchaResponse || !(await this.validateCaptcha(captchaResponse))) {
-        throw new BadRequestException('Invalid CAPTCHA');
-      }
-    }
-
-    const user = await this.userService.findOneByUsername(username);
-
-    if (!user?.password || !(await bcrypt.compare(pass, user.password))) {
-      this.failedLoginAttempts[username] =
-        (this.failedLoginAttempts[username] || 0) + 1;
-
-      throw new BadRequestException('Invalid Login');
-    }
-
-    if (user.domain !== 2) {
-      throw new BadRequestException('Unauthorized user domain.');
-    }
-
-    this.failedLoginAttempts[username] = 0;
-
-    // Generate and store OTP
-    const otp = await this.otpService.createOtp(username, 'login');
-
-    // Send OTP through SMS.ir
-    await this.sendOtpSms(username, otp);
-
-    return {
-      message: 'OTP sent successfully',
+      token: await this.jwtService.signAsync(payload, { expiresIn }),
     };
   }
 

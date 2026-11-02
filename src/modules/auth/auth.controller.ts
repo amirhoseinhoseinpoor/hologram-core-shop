@@ -9,6 +9,7 @@ import { Provider } from 'src/core/decorator/provider.decorator';
 import { SendOtpDto } from './dto/sendOtp.dto';
 import { SignInOtpDto } from './dto/signInOtp.dto';
 import { RegisterDto } from './dto/register.dto';
+import { ForgotPasswordDto, ResetPasswordDto } from './dto/resetPassword.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -51,10 +52,11 @@ export class AuthController {
   @Public()
   @Post('adminLogin')
   async adminSignIn(@Body() signInDto: SignInDto) {
-    return this.authService.adminSignIn(
+    return this.authService.signIn(
       signInDto.username,
       signInDto.password,
       signInDto.captchaResponse,
+      true,
     );
   }
 
@@ -62,6 +64,22 @@ export class AuthController {
   @Post('adminLogin-otp')
   signInAdminOtp(@Body() dto: SignInOtpDto) {
     return this.authService.signInOtp(dto.username, dto.otp, true);
+  }
+
+  @Public()
+  @Post('forgot-password')
+  forgotPassword(@Body() dto: ForgotPasswordDto) {
+    return this.authService.forgotPassword(dto.username);
+  }
+
+  @Public()
+  @Post('reset-password')
+  resetPassword(@Body() dto: ResetPasswordDto) {
+    return this.authService.resetPassword(
+      dto.username,
+      dto.otp,
+      dto.password,
+    );
   }
 
   @Provider()
