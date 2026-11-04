@@ -1,15 +1,28 @@
 import {
   Injectable,
+  NotFoundException,
   StreamableFile,
 } from '@nestjs/common';
 import { MediaRepository } from './media.repository';
 import { MediaDto } from './dto/media-dto';
 import { Media } from 'src/core/db/entities/media.entity';
-import { createReadStream, existsSync, unlinkSync } from 'fs';
-import { join } from 'path';
+import { createReadStream, existsSync, statSync, unlinkSync } from 'fs';
+import { extname, join } from 'path';
 import { NOT_OK, OK } from 'src/core/misc/consts';
 import { MediaTypeDto } from './dto/media-type.dto';
 
+// SVG is left out on purpose: served as an image from this origin it could run scripts.
+const PUBLIC_CONTENT_TYPES: Record<string, string> = {
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.png': 'image/png',
+  '.webp': 'image/webp',
+  '.gif': 'image/gif',
+  '.avif': 'image/avif',
+  '.mp4': 'video/mp4',
+  '.webm': 'video/webm',
+  '.mov': 'video/quicktime',
+};
 
 @Injectable()
 export class SystemService {
@@ -131,23 +144,25 @@ export class SystemService {
     }));
   }
 
-  async getPublicFile(filename: string): Promise<StreamableFile | string> {
+  async getPublicFile(filename: string): Promise<StreamableFile> {
     const file = await this.mediaRepo.findOneFlexible(true, filename);
-    if (!file) return 'File not found';
+    if (!file) throw new NotFoundException('File not found');
 
-    try {
-      const filePath = this.getFilePath(file);
-      const fileStream = createReadStream(filePath);
+    const filePath = this.getFilePath(file);
+    if (!existsSync(filePath)) throw new NotFoundException('File not found');
 
-      fileStream.on('error', (err) => {
-        console.error('Stream error:', err);
-        fileStream.destroy();
-      });
+    const fileStream = createReadStream(filePath);
 
-      return new StreamableFile(fileStream);
-    } catch (e) {
-      console.error('Error reading file:', e);
-      return 'Error reading file';
-    }
+    fileStream.on('error', (err) => {
+      console.error('Stream error:', err);
+      fileStream.destroy();
+    });
+
+    return new StreamableFile(fileStream, {
+      type:
+        PUBLIC_CONTENT_TYPES[extname(file.fileName).toLowerCase()] ||
+        'application/octet-stream',
+      length: statSync(filePath).size,
+    });
   }
 }

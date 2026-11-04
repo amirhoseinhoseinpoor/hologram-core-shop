@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Header,
   Param,
   Post,
   UploadedFiles,
@@ -59,8 +60,10 @@ export class SystemController {
     return this.sysService.getPublicFiles(tag);
   }
 
+  // Uploads get a new uuid when replaced, so a stored file never changes.
   @Get('download/:filename')
   @Public()
+  @Header('Cache-Control', 'public, max-age=31536000, immutable')
   getPublicFile(@Param('filename') filename: string) {
     return this.sysService.getPublicFile(filename);
   }
