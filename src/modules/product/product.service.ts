@@ -44,8 +44,7 @@ export class ProductService {
 
   async findAll() {
     const products = await this.repo.findAll();
-    console.log(products);
-    
+
     if (!products?.length) return [];
     return products.map((prod) => {
       return {
@@ -53,6 +52,7 @@ export class ProductService {
         name: prod.name,
         info: prod.info,
         media: prod.media,
+        updatedAt: prod.updatedAt,
       };
     });
   }
